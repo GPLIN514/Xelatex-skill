@@ -1,0 +1,587 @@
+\documentclass[12pt, a4paper]{article}
+\input{preamble_GP_hw5} 
+%-----------------------------------------------------------------------------------------------------------------------
+% 文章開始
+\title{探索監督式學習分類器：LDA、QDA、KNN}
+\author{{\KT 林貫原}}
+\date{{\R \today }} 			
+\begin{document}
+\renewcommand{\tablename}{表}	
+\renewcommand{\figurename}{圖}
+\maketitle
+\fontsize{12}{22pt}\selectfont 
+
+
+在機器學習領域中，分類方法是解決監督式學習問題的關鍵工具之一。這些方法能夠從已標記的訓練數據中學習模式，進而對新的、未標記的數據進行分類。其中，線性判別分析(LDA)、二次判別分析(QDA)以及最近鄰居法(KNN)是三個廣泛應用的分類器，它們在處理不同型別的數據都表現出色。
+
+LDA和QDA是一種線性和非線性判別模型，它們試圖找到能夠最好分離不同類別的線性和非線性邊界。KNN與此不同，是一種基於實例的學習方法，其分類依賴於鄰近點的集合。這三種方法各自有著優勢和局限性，因此在選擇適當的分類器時，需依據資料特性及問題需求進行選擇。
+
+本文旨在深入探討LDA、QDA和KNN這三種分類器的原理和應用，並透過Python實際執行不同資料集上的實驗，評估模型的性能。具體而言，我們將通過比較模型在訓練集和測試集上的誤判率，以及觀察其在不同數據分佈和特點上的表現，以提供對這些分類器的全面理解，透過本文的深入研究，我們期望讀者能夠更好地了解這些分類算法的運作方式，以及在實際應用中如何有效地選擇和調整它們，以應對各種不同的機器學習挑戰。
+
+\section{判別分析(Discriminant Analysis)}
+判別分析是一種統計方法，旨在找到最能有效區分兩個或多個類別的變數。它不僅僅是一個分類工具，還提供了深入了解資料結構和變數間關係的手段。判別分析在機器學習和統計領域中廣泛應用，特別是當我們需要將資料集映射到離散類別時。本小節會先介紹費雪的判別分析，再切入今天的重頭戲，線性判別分析，因為其是由費雪判別分析演變而來的。
+
+\subsection{費雪判別分析(Fisher's Discriminant Analysis)}
+假設有一筆維數等於 $d$，樣本大小為 $n$ 的數據 $\{\mathbf{x}_1,\ldots,\mathbf{x}_n\}$，也就是說，數據點 $\mathbf{x}_1,\ldots,\mathbf{x}_n$ 散佈在 $\mathbb{R}^d$ 空間。假設此樣本包含兩個類別，第一類有 $n_1$ 個數據點，以 $\mathcal{C}_1$ 表示指標集合，第二類有 $n_2$ 個數據點，以 $\mathcal{C}_2$ 表示指標集合，$n_1+n_2=n$。費雪提出這個想法：將 $\mathbb{R}^d$ 空間的數據點投影至一穿越原點的直線，以達到降低樣本維數的效果。透過改變直線的指向，我們期望找出一條最佳直線使得兩類數據點於直線的投影盡可能地分離開來，這就是費雪判別分析的目的。令單位向量 $\mathbf{w}\in\mathbb{R}^d (\Vert\mathbf{w}\Vert=1)$ 代表直線 $L$ 的指向，即 $L=\{c\mathbf{w}\vert c\in\mathbb{R}\}$。對於任一$\mathbf{x}\in\mathbb{R}^d$，令 $y\mathbf{w}$ 表示 $\mathbf{x}$ 在直線 $L$ 的正交投影。根據正交性質，殘餘量 $\mathbf{x}-y\mathbf{w}$ 正交於 $\mathbf{w}$，即有 $\mathbf{w}^T(\mathbf{x}-y\mathbf{w})=0$，整理可得
+$$\displaystyle  y=\frac{\mathbf{w}^T\mathbf{x}}{\mathbf{w}^T\mathbf{w}}=\mathbf{w}^T\mathbf{x}$$
+根據上式，令 $\mathbf{x}_1,\ldots,\mathbf{x}_n$ 至直線 $L$ 的投影量 (投影座標) 為 $y_1,\ldots,y_n$，即 $y_i=\mathbf{w}^T\mathbf{x}_i$，$1\le i\le n$。設定一個門檻值 $w_0$，立刻得到一個簡單的線性分類法則：若 $\mathbf{w}^T\mathbf{x}\le-w_0$，則數據點 $\mathbf{x}$ 歸於第一類 ($\mathcal{C}_1$)，否則歸於第二類 ($\mathcal{C}_2$)。稍後我們會說明如何決定 $w_0$，眼前的問題是：怎麼求出使分類效果最佳的直線指向 $\mathbf{w}$？
+
+直覺上，為了獲致最好的分類效果，我們希望分屬兩類別的數據點的投影距離越遠越好。寫出兩個類別數據點各自的樣本中心(樣本平均數向量)：
+$$\displaystyle  \mathbf{m}_j=\frac{1}{n_j}\sum_{i\in\mathcal{C}_j}\mathbf{x}_i,~~~j=1,2$$
+投影量的樣本平均數就是樣本中心的投影，如下：
+$$\displaystyle  m_j=\frac{1}{n_j}\sum_{i\in\mathcal{C}_j}y_i=\frac{1}{n_j}\sum_{i\in\mathcal{C}_j}\mathbf{w}^T\mathbf{x}_i=\mathbf{w}^T\mathbf{m}_j,~~~j=1,2$$
+因此，兩類別的樣本中心投影的距離為
+$$\displaystyle  \vert m_2-m_1\vert=\left|\mathbf{w}^T(\mathbf{m}_2-\mathbf{m}_1)\right|$$
+由於我們已經加入限制 $\Vert\mathbf{w}\Vert=1$，樣本中心投影的距離平方 $(m_2-m_1)^2$，稱為組間散佈(between-class scatter)，不會隨著 $\mathbf{w}$ 的長度變化而無限制地增大。使用 Lagrange 乘數法可解出 $\mathbf{w}$ 使組間散佈平方最大化：
+$$\displaystyle\begin{aligned}  L(\lambda,\mathbf{w})&=\left(\mathbf{w}^T(\mathbf{m}_2-\mathbf{m}_1)\right)^2-\lambda(\mathbf{w}^T\mathbf{w}-1)\\  &=\mathbf{w}^T(\mathbf{m}_2-\mathbf{m}_1)(\mathbf{m}_2-\mathbf{m}_1)^T\mathbf{w}-\lambda(\mathbf{w}^T\mathbf{w}-1),  \end{aligned}$$
+其中 $\lambda$ 是 Lagrange 乘數。計算偏微分，
+$$\displaystyle  \frac{\partial L}{\partial\mathbf{w}}=2(\mathbf{m}_2-\mathbf{m}_1)(\mathbf{m}_2-\mathbf{m}_1)^T\mathbf{w}-2\lambda\mathbf{w}$$
+令上式等於零，因為 $(\mathbf{m}_2-\mathbf{m}_1)^T\mathbf{w}$ 為一純量，得 $\mathbf{w}\propto\mathbf{m}_2-\mathbf{m}_1$，再予以歸一化即可。這個做法有一個明顯的缺點。圖 \ref{fig:fisher-discriminant} 左顯示兩類數據點在平面上有良好的散佈區隔，但投影至連接樣本中心的直線後反而產生嚴重交疊。這個現象發生原因在於描述數據點的兩個變數存在顯著的共變異，換句話說，兩變數之間的相關係數不為零。為了克服這個問題，費雪建議直線指向 $\mathbf{w}$ 不僅要使樣本中心的投影分離開，同時還要使同一組內的投影變異越小越好，如圖 \ref{fig:fisher-discriminant} 右所示。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir fisher-discriminant.png}}
+    \caption{費雪判別分析示意圖}
+    \label{fig:fisher-discriminant}
+\end{figure}
+定義兩類別的投影樣本的組內散佈 (within-class scatter) 為
+$$\displaystyle  s_j^2=\sum_{i\in\mathcal{C}_j}(y_i-m_j)^2,~~j=1,2$$
+將組內散佈 $s_j^2$除以($n_j-1$)即為組內樣本變異數。整體的投影樣本組內散佈為$s_1^2+s_2^2$。費雪提出的準則為最大化組間散佈和整體組內散佈的比值：
+$$\displaystyle  J(\mathbf{w})=\frac{(m_2-m_1)^2}{s_1^2+s_2^2}$$
+下面解說如何求出使上式最大的單位向量 $\mathbf{w}$。定義組內散佈矩陣
+$$\displaystyle  S_j=\sum_{i\in\mathcal{C}_j}(\mathbf{x}_i-\mathbf{m}_j)(\mathbf{x}_i-\mathbf{m}_j)^T,~~j=1,2$$
+以及整體組內散佈矩陣 $S_W=S_1+S_2$。對於 $j=1,2$，組內散佈 $s_j^2$ 可表示為組內散佈矩陣 $S_j$ 的二次型：
+$$\displaystyle\begin{aligned}  s_j^2&=\sum_{i\in\mathcal{C}_j}\left(\mathbf{w}^T\mathbf{x}_i-\mathbf{w}^T\mathbf{m}_j\right)^2\\  &=\sum_{i\in\mathcal{C}_j}\mathbf{w}^T(\mathbf{x}_i-\mathbf{m}_j)(\mathbf{x}_i-\mathbf{m}_j)^T\mathbf{w}\\  &=\mathbf{w}^T\left(\sum_{i\in\mathcal{C}_j}(\mathbf{x}_i-\mathbf{m}_j)(\mathbf{x}_i-\mathbf{m}_j)^T\right)\mathbf{w}\\  &=\mathbf{w}^TS_j\mathbf{w}\end{aligned}$$
+整體組內散佈即為
+$$\displaystyle s_1^2+s_2^2=\mathbf{w}^TS_1\mathbf{w}+\mathbf{w}^TS_2\mathbf{w}=\mathbf{w}^TS_W\mathbf{w}$$
+類似地，定義組間散佈矩陣
+$$\displaystyle  S_B=(\mathbf{m}_2-\mathbf{m}_1)(\mathbf{m}_2-\mathbf{m}_1)^T$$
+組間散佈 $(m_2-m_1)^2$ 也可表示為組間散佈矩陣 $S_B$ 的二次型：
+$$\displaystyle\begin{aligned}  (m_2-m_1)^2&=\left(\mathbf{w}^T\mathbf{m}_2-\mathbf{w}^T\mathbf{m}_1\right)^2\\  &=\mathbf{w}^T(\mathbf{m}_2-\mathbf{m}_1)(\mathbf{m}_2-\mathbf{m}_1)^T\mathbf{w}\\  &=\mathbf{w}^TS_B\mathbf{w}.  \end{aligned}$$
+組內散佈矩陣(在不造成混淆的情況下，整體組內散佈矩陣簡稱為組內散佈矩陣)$S_W$是一個對稱半正定矩陣。如果$n>d$，$S_W$通常是正定矩陣，也就是可逆矩陣，以下假設如此。組間散佈矩陣$S_B$是樣本中心差$\mathbf{m}_2-\mathbf{m}_1$的外積(outer product)，因此是對稱半正定；當$\mathbf{m}_1\neq\mathbf{m}_2$(絕大多數的應用都滿足此條件)，$\text{rank}(S_B)=1$。
+
+使用組間散佈和組內散佈的二次型表達，費雪準則可用矩陣式表示為
+$$\displaystyle  J(\mathbf{w})=\frac{\mathbf{w}^TS_B\mathbf{w}}{\mathbf{w}^TS_W\mathbf{w}}$$
+最大化費雪準則等同於下列約束優化問題 ：
+$$\displaystyle  \max_{\mathbf{w}^TS_W\mathbf{w}=1}\mathbf{w}^TS_B\mathbf{w}$$
+使用 Lagrange 乘數法不難推導出最佳條件式。這裡我們介紹一個線性代數方法：費雪準則也稱為Generalized Rayleigh quotient，最大化$J$($\mathbf{w}$) 等同於求解廣義特徵值問題：
+$$\displaystyle  S_B\mathbf{w}=\lambda S_W\mathbf{w}$$
+由於$S_W$是可逆矩陣，廣義特徵值問題退化為一般特徵值問題$S_W^{-1}S_B\mathbf{w}=\lambda\mathbf{w}$。因為$S_W^{-1}$和$S_B$都是半正定，$S_W^{-1}S_B$的特徵值$\lambda$為非負數，保證$\mathbf{w}$必然是特徵向量。廣義特徵方程左式乘$\mathbf{w}^T$，$\mathbf{w}^TS_B\mathbf{w}=\lambda\mathbf{w}^TS_W\mathbf{w}$，可知費雪準則為 $J(\mathbf{w})=\lambda$，因此我們要挑選出最大的特徵值。但$\text{rank}(S_W^{-1}S_B)=\text{rank}(S_B)=1$，表示$S_W^{-1}S_B$僅有唯一一個正特徵值。寫出特徵方程的顯式表達$\displaystyle  S_W^{-1}(\mathbf{m}_2-\mathbf{m}_1)(\mathbf{m}_2-\mathbf{m}_1)^T\mathbf{w}=\lambda\mathbf{w}$，忽略式中的純量，對應唯一正特徵值的特徵向量為
+$$\displaystyle  \mathbf{w}\propto S_W^{-1}(\mathbf{m}_2-\mathbf{m}_1)$$
+直白地說，最佳投影直線的指向即為連接兩類別樣本中心的向量於排除組內散佈效應後的方向(如圖 \ref{fig:fisher-discriminant} 右所示)。
+
+ 
+\subsection{Linear Discriminant Analysis(LDA)}
+費雪的判別分析其實是一個應用於兩類別樣本的降維方法，它本身並不具備判別功能。如欲將費雪的判別分析引進分類功能，我們還須決定分類法則$\mathbf{w}^T\mathbf{x}\le -w_0$的門檻值$w_0$，這個分類法稱為線性判別分析 (linear discriminant analysis，簡稱LDA)。線性判別分析假設分類樣本的條件密度$p(\mathbf{x}\vert \mathcal{C}_1)$和$p(\mathbf{x}\vert\mathcal{C}_2)$ 服從常態分布：
+$$\displaystyle  \mathcal{N}(\mathbf{x}\vert\boldsymbol{\mu}_j,\Sigma)=\frac{1}{(2\pi)^{d/2}\vert\Sigma\vert^{1/2}}\exp\left\{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu}_j)^T\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu}_j)\right\}$$
+
+其中$\boldsymbol{\mu}_j\in\mathbb{R}^d$是類別 $\mathcal{C}_j$ 的平均數向量，$\Sigma$是$d\times d$階共變異數矩陣(covariance matrix)，$\vert\Sigma\vert$表示$\Sigma$的行列式。請特別注意，線性判別分析假設兩類別有相同的共變異數矩陣$\Sigma$，也就是說，兩類別的數據點具有相同的散佈型態。
+
+給定一個數據點$\mathbf{x}\in\mathbb{R}^d$，如何判定它應歸類於$\mathcal{C}_1$抑或是$\mathcal{C}_2$？貝氏定理(Bayes’ theorem)提供了解答：
+$$\displaystyle  P(\mathcal{C}_j\vert\mathbf{x})=\frac{p(\mathbf{x}\vert\mathcal{C}_j)P(\mathcal{C}_j)}{p(\mathbf{x})}$$
+其中
+\begin{itemize}
+\item $P(\mathcal{C}_j)$是類別$\mathcal{C}_j$出現的機率，稱為先驗機率(prior probability)。
+\item $p(\mathbf{x}\vert\mathcal{C}_j)$是條件密度函數，即給定類別$\mathcal{C}_j$，數據點$\mathbf{x}$的機率密度函數，也稱為似然 (likelihood)。
+\item $p(\mathbf{x})$是數據點 $\mathbf{x}$的機率密度函數，稱為證據 (evidence)，算式為
+$p(\mathbf{x})=p(\mathbf{x}\vert\mathcal{C}_1)P(\mathcal{C}_1)+p(\mathbf{x}\vert\mathcal{C}_2)P(\mathcal{C}_2)$。
+
+\item $P(\mathcal{C}_j\vert\mathbf{x})$是指在給定數據點$\mathbf{x}$的情況下，該點屬於$\mathcal{C}_j$的機率，稱為後驗機率 (posterior probability)。
+\end{itemize}
+
+所謂貝氏最佳分類器就是將數據點$\mathbf{x}$的類別指定給最大後驗機率所屬的類別：若$P(\mathcal{C}_1\vert\mathbf{x})\ge P(\mathcal{C}_2\vert\mathbf{x})$，則$\mathbf{x}$歸於第一類，否則歸於第二類。因為對數函數$\log (\cdot)$ 是一個單調遞增函數，$P(\mathcal{C}_1\vert\mathbf{x})\ge P(\mathcal{C}_2\vert\mathbf{x})$等同於$\log P(\mathcal{C}_1\vert\mathbf{x})\ge \log P(\mathcal{C}_2\vert\mathbf{x})$。此外，後驗機率$P(\mathcal{C}_1\vert\mathbf{x})$和$P(\mathcal{C}_2\vert\mathbf{x})$有相同的分母 $p(\mathbf{x})$，我們大可直接比較分子的大小。所以，貝氏最優分類法則可以改寫為：若$\log p(\mathbf{x}\vert\mathcal{C}_1)+\log P(\mathcal{C}_1)\ge \log p(\mathbf{x}\vert\mathcal{C}_2)+\log P(\mathcal{C}_2)$，則$\mathbf{x}$歸於第一類，否則歸於第二類。
+
+考慮第一類數據點$\mathbf{x}$，將多變量常態分布代入$p(\mathbf{x}\vert\mathcal{C}_j)$，移除常數部分，得到不等式
+$$\displaystyle  -\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu}_1)^T\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu}_1)+\log P(\mathcal{C}_1)\ge -\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu}_2)^T\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu}_2)+\log P(\mathcal{C}_2)$$
+乘開化簡可得
+$$\displaystyle  (\boldsymbol{\mu}_2-\boldsymbol{\mu}_1)^T\Sigma^{-1}\mathbf{x}\le\frac{1}{2}\boldsymbol{\mu}_2^T\Sigma^{-1}\boldsymbol{\mu}_2-\frac{1}{2}\boldsymbol{\mu}_1^T\Sigma^{-1}\boldsymbol{\mu}_1-\log P(\mathcal{C}_2)+\log P(\mathcal{C}_1)$$
+因此，線性判別分析的分類法則如下：若$\mathbf{w}^T\mathbf{x}\le -w_0$，則$\mathbf{x}$歸於第一類，否則歸於第二類，其中
+$$\displaystyle\begin{aligned}  \mathbf{w}&=\Sigma^{-1}(\boldsymbol{\mu}_2-\boldsymbol{\mu}_1)\\  w_0&=-\frac{1}{2}\boldsymbol{\mu}_2^T\Sigma^{-1}\boldsymbol{\mu}_2+\frac{1}{2}\boldsymbol{\mu}_1^T\Sigma^{-1}\boldsymbol{\mu}_1+\log P(\mathcal{C}_2)-\log P(\mathcal{C}_1).  \end{aligned}$$
+給定一訓練樣本，先驗機率$P(\mathcal{C}_j)$以類別樣本出現的頻率$n_j/n$ 估計，類別平均數向量$\boldsymbol{\mu}_j$以樣本平均數向量$\mathbf{m}_j$估計，共變異數矩陣 $\Sigma$ 則以加權平均(有偏) 共變異數矩陣$S$估計，其中
+$$\displaystyle\begin{aligned}  S&=\left(\frac{n_1}{n}\right)\frac{1}{n_1}\sum_{i\in\mathcal{C}_1}(\mathbf{x}_i-\mathbf{m}_1)(\mathbf{x}_i-\mathbf{m}_1)^T+\left(\frac{n_2}{n}\right)\frac{1}{n_2}\sum_{i\in\mathcal{C}_2}(\mathbf{x}_i-\mathbf{m}_2)(\mathbf{x}_i-\mathbf{m}_2)^T\\  &=\frac{1}{n}(S_1+S_2)=\frac{1}{n}S_W.\end{aligned}$$
+採用估計量的線性判別分析給出
+$$\displaystyle  \mathbf{w}=nS_W^{-1}(\mathbf{m}_2-\mathbf{m}_1)$$
+這與費雪的判別分析的最佳直線有相同的指向，並確定了判別門檻。
+$$\displaystyle  w_0=-\frac{n}{2}\mathbf{m}_2^TS_W^{-1}\mathbf{m}_2+\frac{n}{2}\mathbf{m}_1^TS_W^{-1}\mathbf{m}_1+\log \frac{n_2}{n}-\log \frac{n_1}{n}$$
+ 
+
+\section{Quadratic Discriminant Analysis (QDA)}
+前一節我們講到了Linear Discriminant Analysis把二維的數據投影到一維然後用其找出最佳的分割線。我們可以發現我們當時是假設兩組資料的covariance matrix相同，而這樣的作法沒有考慮到兩組資料的分布可能不一樣，所以使我們找到的分割線並不理想。所以在這節我們要來介紹一個和LDA相近的演算法Quadratic Discriminant Analysis。
+關於QDA其和LDA的想法和概念幾乎一樣，他們的差別只在於LDA的covariance matrix相同，QDA的covariance matrix不一樣。所以我們依照相同的脈絡，從Gaussian Function開始推導。
+
+\subsection{Gaussian Function}
+對於QDA兩個類別的高斯方程式我們寫成
+$$f_1(x)=\frac{1}{\sqrt{(2\pi)^d\mid\Sigma_1\mid}}exp\left(-\frac{(x-\mu_1)^T\Sigma_1^{(-1)}(x-\mu_1)}{2}\right)\pi_1$$
+$$f_2(x)=\frac{1}{\sqrt{(2\pi)^d\mid\Sigma_2\mid}}exp\left(-\frac{(x-\mu_2)^T\Sigma_2^{(-1)}(x-\mu_2)}{2}\right)\pi_2$$
+其中$d$為$x$的特徵數量
+$$\pi_1=\frac{\sum_{i\in C_1}^N1}{N},\pi_2=\frac{\sum_{i\in C_2}^N1}{N},\mu_1=\frac{\sum_{i\in C_1}^Nx_i}{\sum_{i\in C_1}^N1},\mu_2=\frac{\sum_{i\in C_2}^Nx_i}{\sum_{i\in C_2}^N1}$$
+$$\Sigma_1=\frac{1}{N\pi_1-1}\sum_{i\in C_1}^N(x_i-\mu_1)(x_i-\mu_1)^T,\Sigma_2=\frac{1}{N\pi_2-1}\sum_{i\in C_2}^N(x_i-\mu_1)(x_i-\mu_1)^T$$
+所以一樣我們就可以用上面的方程式來做分類。
+\subsection{Projecting Vector}
+在前一節我們知道我想要讓$$w$$乘上資料點轉到一維的時候，兩者平均值相差越大越好，變異數越小越好。所以說我們的cost function可以寫成
+$$J(w)=\frac{(m_1-m_2)^2}{s_1^2+s_2^2}$$
+其中
+$$m_1=w^T\mu_1,m_2=w^T\mu_2$$
+$$s_1^2=\frac{1}{N\pi_1-1}\sum_{i\in C_k}^N(w^Tx_i-w^T\mu_1)(w^Tx_i-w^T\mu_1)^T,$$
+$$s_2^2=\frac{1}{N\pi_2-1}\sum_{i\in C_k}^N(w^Tx_i-w^T\mu_2)(w^Tx_i-w^T\mu_2)^T$$
+接下來我們一樣可以把cost function寫成
+$$J(w)=\frac{w^TS_Bw}{w^TS_Dw}$$
+其中
+$$S_B=w^T(\mu_1-\mu_2)(\mu_1-\mu_2)^Tw$$
+$$S_D=w^T\left[\frac{1}{N\pi_1-1}\sum_{i\in C_k}^N(x_i-\mu_1)(x_i-\mu_1)^T+\frac{1}{N\pi_2-1}\sum_{i\in C_k}^N(x_i-\mu_2)(x_i-\mu_2)^T\right]$$
+最後可以表示成
+$$S_D^{-1}S_Bw=J(w)w$$
+所以QDA也可用此方程式找出eigenvalue和eigenvector，如此一來就能求得我們的向量$w$。
+\subsection{Classification Line}
+對於QDA的分割線就比較複雜一點，因為其covariance matrix不一樣。首先我們先讓兩式相等
+\begin{align*}
+&\frac{1}{\sqrt{(2\pi)^d\mid\Sigma_1\mid}}exp\left(-\frac{(x-\mu_1)^T\Sigma_1^{(-1)}(x-\mu_1)}{2}\right)\pi_1\\
+&=\frac{1}{\sqrt{(2\pi)^d\mid\Sigma_2\mid}}exp\left(-\frac{(x-\mu_2)^T\Sigma_2^{(-1)}(x-\mu_2)}{2}\right)\pi_2
+\end{align*}
+取$ln$後我們可以讓方程式表示成
+\begin{align*}
+&-\frac{1}{2}ln(2\pi)-\frac{1}{2}ln(\mid\Sigma_1\mid)-\frac{1}{2}(x-\mu_1)^T\Sigma^{-1}(x-\mu_1)+ln(\pi_1)\\
+&=-\frac{1}{2}ln(2\pi)-\frac{1}{2}ln(\mid\Sigma_2\mid)-\frac{1}{2}(x-\mu_2)^T\Sigma^{-1}(x-\mu_2)+ln(\pi_2)
+\end{align*}
+接著我們可以把它整理成
+\begin{align*}
+&ln(\mid\Sigma_1\mid)+x^T\Sigma_1^{-1}x+\mu_1^T\Sigma_1^{-1}\mu_1-2\mu_1^T\Sigma_1^{-1}x-2ln(\pi _1)\\
+=&ln(\mid\Sigma_2\mid)+x^T\Sigma_2^{-1}x+\mu_2^T\Sigma_2^{-1}\mu_2-2\mu_2^T\Sigma_2^{-1}x-2ln(\pi _2)
+\end{align*}
+最後可以寫成
+\begin{align*}
+0=&x^T\Sigma_1^{-1}x-x^T\Sigma_2^{-1}x+2(\Sigma_2^{-1}\mu_2-\Sigma_1^{-1}\mu_1)^rx\\
+&+(\mu_1^T\Sigma_1^{-1}\mu_1-\mu_2^T\Sigma_2^{-1}\mu_2)+ln\left(\frac{\mid\Sigma_1\mid}{\mid\Sigma_2\mid}\right)+2ln\left(\frac{\pi_2}{\pi_1}\right)
+\end{align*}
+而在這邊我們一樣也把他看成
+$$x^Tax+bx+c=0$$
+我們就可以將點帶入畫出分割線。
+
+
+\section{The K-Nearest Neighbors(KNN)}
+K最近鄰居法，也稱為KNN 或k-NN，是一種非參數、有監督的學習分類器，KNN 使用鄰近度對單一資料點的分組進行分類或預測。雖然K近鄰演算法(KNN) 可以用於迴歸或分類問題，但它通常用作分類演算法，假設可以在彼此附近找到相似點。
+
+對於分類問題，根據多數票分配類別標籤，也就是使用在給定資料點周圍最常表示的標籤。雖然這在技術上被認為是"最高票制"，但"多數票"一詞在文學中更常用。這兩個術語之間的區別在於，"多數票"在技術上要求超過50\%的多數，這主要適用於只有兩個類別的情況。有多個分類時（例如四個類別），不一定要求50\%的投票才能對一個分類下結論；您可以分配一個投票率超過25\%的類別標籤。 
+
+現在，假設我們有一個新的未標記樣本，我們想要確定它應該被歸類為藍色還是綠色。這時，KNN算法派上用場。圖 \ref{fig:knn示意圖} (a) 以一個直觀的示意圖呈現了這個情境，其中我們引入了一個新的樣本。
+
+為了確定新樣本的類別歸屬，KNN演算法會開始計算它與鄰近幾個樣本的距離(如圖 \ref{fig:knn示意圖} (b) 所示)。這些鄰近的樣本即為KNN的鄰居。計算過後，我們發現新樣本附近的樣本中綠色的比藍色的多。因此，KNN將新樣本歸類在綠色的類別中(如圖 \ref{fig:knn示意圖} (c) )。
+
+這個例子清晰展示了KNN是如何利用鄰近樣本的信息來進行分類的。這種基於鄰近性的分類方法在實際應用中常常表現出色，特別是在處理具有局部結構和相對複雜邊界的數據集時。接下來，我們將更詳細地介紹KNN算法的原理，並於下一小節來展示其在不同情境下的應用和效能。\footnote{資料來源:https://ccjou.wordpress.com}
+\\
+\begin{figure}[H]
+    \centering
+        \subfloat[未受標記的新樣本]{
+        \includegraphics[scale=0.5]{\imgdir knn示意圖1.png}}\\
+        \subfloat[計算相鄰樣本的距離]{
+        \includegraphics[scale=0.5]{\imgdir knn示意圖2.png}}
+        \subfloat[歸類於所屬類別]{
+        \includegraphics[scale=0.5]{\imgdir knn示意圖3.png}}
+    \caption{KNN示意圖}
+    \label{fig:knn示意圖}
+\end{figure}
+
+迴歸問題使用與分類問題類似的概念，但在這種情況下，取$k$個最近鄰的平均值來對分類進行預測。這裡的主要區別是分類用於離散值，而迴歸用於連續值。但是，在進行分類之前，必須先定義距離。最常用的是歐幾里得距離，我們將在下面深入研究。
+另外值得注意的是，KNN只是儲存訓練資料集，而不是經歷訓練階段。這也意味著所有計算都發生在進行分類或預測時。由於KNN嚴重依賴記憶體來儲存其所有訓練數據，因此也稱為基於實例或基於記憶體的學習方法。
+
+雖然KNN不再像以前那麼受歡迎，但由於其簡單性和準確性，仍然是人們在數據科學中學習的首選演算法之一。然而，隨著資料集的成長，KNN變得越來越低效，影響了整體模型的效能。KNN通常用於簡單的推薦系統、模式識別、資料探勘、金融市場預測、入侵偵測等。 
+
+至於計算距離的常見方法有以下幾種：
+\begin{enumerate}
+\item 歐幾里德距離(Euclidean Distance):這是最常用的距離度量，僅限於實值向量。使用下面的公式，可以測量查詢點和被測量的另一個點之間的直線。
+$$d(x,y)=\sqrt{\sum_{i=1}^n(x_i-y_i)^2}$$
+\item 曼哈頓距離(Manhattan Distance):這也是另一個流行的距離指標，它測量兩點之間的絕對值。也稱為計程車距離或城市街區距離，因為它通常用網格可視化，說明人們如何通過城市街道從一個地址導航到另一個地址。
+$$d(x,y)=(\sum_{i=1}^m\left|x_i-y_i\right|)$$
+\item 明可夫斯基距離(Minkowski Distance)：此距離度量是歐幾里德和曼哈頓距離度量的廣義形式。下面公式中的參數$p$允許建立其他距離度量。明氏距離最常見$p$取1或2，當$p$等於2時，即為歐幾里得距離，而曼哈頓距離用$p$等於1來表示。
+$$d(x,y)=(\sum_{i=1}^n\left|x_i-y_i\right|)^{\frac{1}{p}}$$
+而$p$取正無窮時的極限情況下，可以得到切比雪夫距離。
+$$d(x,y)={\displaystyle \lim _{p\to \infty }{\left(\sum _{i=1}^{n}|x_{i}-y_{i}|^{p}\right)^{\frac {1}{p}}}=\max _{i=1}^{n}|x_{i}-y_{i}|.\,}$$
+\end{enumerate}
+KNN中的$k$值定義了將檢查多少個鄰居以確定特定查詢點的分類。例如，如果$k=1$，則將被指派到與其單一最近鄰相同的類別。定義$k$可以是一種平衡行為，因為不同的值會導致過度擬合或欠擬合。$k$值越小，可能導致變異數越大，但如果離差較低，以及$k$值越大可能導致離差較高且變異數較低。$k$的選擇將很大程度上取決於輸入數據，因為具有更多異常值或雜訊的數據可能會在$k$值較高時表現更好。整體而言，建議$k$使用奇數以避免分類聯繫，交叉驗證策略可以幫助你為資料集選擇最佳$k$。
+\section{資料不同的狀況}
+本小節會以不同的資料來去看LDA、QDA、抑或是KNN的結果，這些結果提供了對模型性能的全面評估，有助於選擇最適合的分類方法。而前三個資料為練習參考資料，其餘皆為運用函數隨機生成的。
+
+\subsection{資料1}
+透過LDA的方法執行出的結果如圖 \ref{fig:la1-LDA} ，其中0.06代表的是模型的錯誤率，或者說是錯誤預測的比例。在訓練集上的錯誤率約為 5.94\%；在測試集上的錯誤率約為 5.73\%，其中測試集的資料是設定為整體資料的20\%。這些數字越低越好，因為它們表示模型的預測更加準確。在一個二元分類問題中，錯誤率等於 1 減去模型的準確率。所以，訓練集上的準確率約為 94\%（1-0.0594=0.9406），而測試集上的準確率約為 94.27\%（1-0.0573=0.9427）。\\
+\begin{table} [H]
+\centering
+    \caption{資料1之LDA錯判率}\label{tb:la1-LDA}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.3\textwidth}{!}{
+      \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.0600 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.0594 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.0573 \\\hline
+    \end{tabular}
+    }
+\end{table}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir la1lda.png}}
+    \caption{資料1-LDA}
+    \label{fig:la1-LDA}
+\end{figure}
+
+\subsection{資料2}
+透過LDA的方法執行出的結果如圖 \ref{fig:la2-LDA} ，其中0.09代表的是模型的錯誤率，或者說是錯誤預測的比例。在訓練集上的錯誤率約為 9.19\%；在測試集上的錯誤率約為 9.60\%，其中測試集的資料是設定為整體資料的20\%。這些數字越低越好，因為它們表示模型的預測更加準確。在一個二元分類問題中，錯誤率等於 1 減去模型的準確率。所以，訓練集上的準確率約為 90.81\%（1-0.0919=0.9081），而測試集上的準確率約為 90.40\%（1-0.0960=0.9040）。\\
+\begin{table} [H]
+\centering
+    \caption{資料2之LDA錯判率}\label{tb:la2-LDA}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.3\textwidth}{!}{
+      \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    LDA整體模型 & 0.0900 \\\rowcolor{bubbles}
+    \extrarowheight=5pt
+    LDA訓練集 & 0.0919 \\\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    LDA測試集 & 0.0960 \\\hline
+    \end{tabular}
+    }
+\end{table}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir la2lda.png}}
+    \caption{資料2-LDA}
+    \label{fig:la2-LDA}
+\end{figure}
+
+\subsection{資料3}
+透過LDA的方法執行出的結果如圖 \ref{fig:la3-LDA} ，0.27代表的是模型的錯誤性。在訓練集上的錯誤率約為 26.87\%；在測試集上的錯誤率約為 28.33\%，其中測試集的資料是設定為整體資料的20\%。這些數字越低越好，因為它們表示模型的預測更加準確。在一個二元分類問題中，錯誤率等於 1 減去模型的準確率。所以，訓練集上的準確率約為 73.13\%，而測試集上的準確率約為 71.67\%。
+
+透過QDA的方法執行出的結果如圖 \ref{fig:la3-QDA} ，0.2850代表的是模型的準確性。在訓練集上的錯誤率約為 27.59\%；在測試集上的錯誤率約為 28.80\%，其中測試集的資料是設定為整體資料的20\%。這些數字越低越好，因為它們表示模型的預測更加準確。在一個二元分類問題中，錯誤率等於 1 減去模型的準確率。所以，訓練集上的準確率約為 72.41\%，而測試集上的準確率約為 71.20\%。
+
+透過KNN的方法執行出的結果如圖 \ref{fig:la3-KNN} ，0.1550代表的是模型的準確性。在訓練集上的錯誤率約為 17.05\%；在測試集上的錯誤率約為 19.40\%，其中測試集的資料是設定為整體資料的20\%。這些數字越低越好，因為它們表示模型的預測更加準確。在一個二元分類問題中，錯誤率等於 1 減去模型的準確率。所以，訓練集上的準確率約為 82.95\%，而測試集上的準確率約為 80.60\%。
+
+以下做個簡單的結論：
+\begin{itemize}
+\item 在三種不同的分類方法中，KNN在訓練集和測試集上均取得了相對較低的錯誤率，並且表現相對優越。
+\item 數據的分布可能不適合使用LDA和QDA。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過配適(overfitting)現象。
+\end{itemize}
+這些結果提供了對模型性能的全面評估，有助於選擇最適合該資料的分類方法。\\
+\begin{table} [H]
+\centering
+    \caption{資料3之LDA、QDA、KNN錯判率}\label{tb:la3-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.3\textwidth}{!}{
+      \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    LDA整體模型 & 0.2700 \\\rowcolor{bubbles}
+    \extrarowheight=5pt
+    LDA訓練集 & 0.2687 \\\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    LDA測試集 & 0.2833 \\\rowcolor{bubbles}
+    \extrarowheight=5pt
+    QDA整體模型 & 0.2850 \\\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    QDA訓練集 & 0.2759 \\\rowcolor{bubbles}
+    \extrarowheight=5pt
+    QDA測試集 & 0.2880 \\\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    KNN整體模型 & 0.1550 \\\rowcolor{bubbles}
+    \extrarowheight=5pt
+    KNN訓練集 & 0.1705 \\\rowcolor{mistyrose}
+    \extrarowheight=5pt
+    KNN測試集 & 0.1940  \\\hline
+    \end{tabular}
+    }
+\end{table}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.85]{\imgdir la3lda.png}}
+    \caption{資料3-LDA}
+    \label{fig:3-LDA}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.85]{\imgdir la3qda.png}}
+    \caption{資料3-QDA}
+    \label{fig:la3-QDA}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.85]{\imgdir la3knn.png}}
+    \caption{資料3-KNN}
+    \label{fig:la3-KNN}
+\end{figure}
+
+\subsection{資料4}
+此資料生成兩組多元常態分佈樣本，第一組的平均值為 $(0, 0)$，而第二個群組的平均值為$(3, 2)$，共變異數矩陣皆為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，且兩組皆包含200個樣本，分析結果如圖 \ref{fig:la4-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 在三種分類方法中，KNN在 K = 5 時表現最佳，具有相對較低的訓練和測試錯誤率。
+\item LDA和QDA的表現相當接近，且都優於KNN，可能因為數據的分布適合使用LDA和QDA。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\item 根據目前的結果，這些模型可信賴且可應用於相似的分類任務。
+\end{itemize}
+\begin{table} [H]
+\centering
+    \caption{資料4之LDA、QDA、KNN錯判率}\label{tb:la4-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+      \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.0450 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.0447 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.0471 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.0450 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.0428 \\\rowcolor{bubbles}
+    QDA測試集 & 0.0457 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.0350 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.0353 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.0451   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.0375 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.0406 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.0457  \\\hline
+    \end{tabular}
+    }
+\end{table}
+\vspace{30pt}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la4ldaqdaknn.png}}
+    \caption{資料4-LDA、QDA、KNN}
+    \label{fig:la4-LDAQDAKNN}
+\end{figure}
+
+\subsection{資料5}
+此資料生成兩組多元常態分佈樣本，第一組的平均值為 $(0, 0)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}3 & 2 \\2 & 3 \end{bmatrix}$，而第二個群組的平均值為$(3, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，分析結果如圖 \ref{fig:la5-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 在三種分類方法中，KNN 在 K = 5 時表現最佳，具有相對較低的訓練錯誤率，但測試錯誤率較高，可能存在過度配適。
+\item LDA 和 QDA 的表現相當接近，且錯誤率都相對較高。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\end{itemize}
+這些結果提供了對模型性能的全面評估，有助於選擇最適合該資料的分類方法。總體而言，可以進一步調整模型參數或考慮其他方法以提高性能。\\
+\begin{table} [H]
+\centering
+    \caption{資料5之LDA、QDA、KNN錯判率}\label{tb:la5-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+  \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.1250 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.1286 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.1270 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.1200 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.1237 \\\rowcolor{bubbles}
+    QDA測試集 & 0.1319 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.1125 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.1066 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.1460   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.1175 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.1234 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.1354  \\\hline
+    \end{tabular}
+}
+\end{table}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la5ldaqdaknn.png}}
+    \caption{資料5-LDA、QDA、KNN}
+    \label{fig:la5-LDAQDAKNN}
+\end{figure}
+
+\subsection{資料6}
+此資料生成兩組多元常態分佈樣本，第一組的平均值為 $(-1, 0)$，共變異數矩陣為$\begin{bmatrix}4.5 & 4 \\4 & 4.5 \end{bmatrix}$，而第二個群組的平均值為$(4, 2)$，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，且兩組皆包含200個樣本，分析結果如圖 \ref{fig:la6-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 三種分類方法均表現出很低的訓練和測試錯誤率，顯示模型在該資料上有良好的性能。
+\item QDA 在訓練和測試集上均表現出較低的錯誤率，可能是一個較為適合的模型。
+\item LDA 和 KNN 也表現不錯，但在某些情況下，可能需要進一步調整模型參數以提高性能。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\end{itemize}
+\begin{table} [H]
+\centering
+    \caption{資料6之LDA、QDA、KNN錯判率}\label{tb:la6-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+  \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.0475 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.0449 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.0455 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.0375 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.0375 \\\rowcolor{bubbles}
+    QDA測試集 & 0.0362 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.0425 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.0411 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.0546   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.0500 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.0486 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.0519  \\\hline
+    \end{tabular}
+    }
+\end{table}
+ \vspace{30pt}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la6ldaqdaknn.png}}
+    \caption{資料6-LDA、QDA、KNN}
+    \label{fig:la6-LDAQDAKNN}
+\end{figure}
+
+\subsection{資料7}
+此資料生成三組多元常態分佈樣本，第一組的平均值為 $(0.5, -0.2)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}2 & 0.3 \\0.3 & 1 \end{bmatrix}$，第二個群組的平均值為$(2, 2)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0.2 \\0 & 1 \end{bmatrix}$，而第三個群組的平均值為$(-1, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，分析結果如圖 \ref{fig:la7-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 三種分類方法在該資料上均顯示出一定程度的訓練和測試錯誤率，但整體而言，錯誤率相對較高。
+\item QDA 在訓練和測試集上表現相對較好，但仍然有一定的錯誤率。
+\item LDA 和 KNN 表現相對較差，可能需要進一步調整來提高性能。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\end{itemize}
+總體而言，這些結果指出進一步改進模型可能是必要的。
+\\
+\begin{table} [H]
+\centering
+    \caption{資料7之LDA、QDA、KNN錯判率}\label{tb:la7-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+  \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.1450 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.1449 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.1506 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.1467 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.1445 \\\rowcolor{bubbles}
+    QDA測試集 & 0.1496 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.1200 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.1243 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.1678   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.1333 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.1322 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.1489  \\\hline
+    \end{tabular}
+    }
+\end{table}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la7ldaqdaknn.png}}
+    \caption{資料7-LDA、QDA、KNN}
+    \label{fig:la7-LDAQDAKNN}
+\end{figure}
+
+\subsection{資料8}
+此資料生成三組多元常態分佈樣本，第一組的平均值為 $(0.5, -0.2)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}5 & 0.3 \\0.3 & 2 \end{bmatrix}$，第二個群組的平均值為$(2, 2)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}2 & 0.2 \\0 & 1 \end{bmatrix}$，而第三個群組的平均值為$(-1, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，分析結果如圖 \ref{fig:la8-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 三種分類方法在該問題上均顯示出一定程度的訓練和測試錯誤率，並且相對高，表現皆不是很好。
+\item QDA 在訓練和測試集上表現相對較好，但仍然有一定的錯誤率。
+\item LDA 和 KNN 表現相對較差，可能需要進一步調整模型參數或使用其他方法來提高性能。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\end{itemize}
+\begin{table} [H]
+\centering
+    \caption{資料8之LDA、QDA、KNN錯判率}\label{tb:la8-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+  \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.2267 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.2246 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.2255 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.1883 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.1881 \\\rowcolor{bubbles}
+    QDA測試集 & 0.1891 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.1700 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.1683 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.2202   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.1767 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.1900 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.2085  \\\hline
+    \end{tabular}
+    }
+\end{table}
+ \vspace{30pt}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la8ldaqdaknn.png}}
+    \caption{資料8-LDA、QDA、KNN}
+    \label{fig:la8-LDAQDAKNN}
+\end{figure}
+
+\subsection{資料9}
+此資料生成四組多元常態分佈樣本，第一組的平均值為 $(1.5, -1.2)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}5 & 0.3 \\0.3 & 2 \end{bmatrix}$，第二個群組的平均值為$(3, 3)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}2 & 0.2 \\0.2 & 1 \end{bmatrix}$，第三個群組的平均值為$(-2, 3)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0.2 \\0 & 1 \end{bmatrix}$，而第四個群組的平均值為$(1, -4)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，分析結果如圖 \ref{fig:la9-LDAQDAKNN} 。
+
+以下做個簡單的分析結論：
+\begin{itemize}
+\item 三種分類方法在該問題上仍然表現出一定程度的訓練和測試錯誤率。
+\item QDA 依然在測試集上表現相對較好，訓練和測試錯誤率都在合理範圍內。
+\item 訓練集和測試集的表現相對一致，沒有明顯的過度配適(overfitting)現象。
+\end{itemize}
+總體而言，可以進一步調整模型參數或考慮其他方法以提高性能。\\
+\begin{table} [H]
+\centering
+    \caption{資料9之LDA、QDA、KNN錯判率}\label{tb:la9-LDAQDAKNN}
+    \renewcommand\arraystretch{1.5}
+    \resizebox{0.4\textwidth}{!}{
+  \begin{tabular}{lc}
+    \hline \rowcolor{magicmint}
+    類型 & 錯判率 \\\hline\rowcolor{mistyrose}
+    LDA整體模型 & 0.1540 \\\rowcolor{bubbles}
+    LDA訓練集 & 0.1506 \\\rowcolor{mistyrose}
+    LDA測試集 & 0.1546 \\\rowcolor{bubbles}
+    QDA整體模型 & 0.1400 \\\rowcolor{mistyrose}
+    QDA訓練集 & 0.1400 \\\rowcolor{bubbles}
+    QDA測試集 & 0.1458 \\\rowcolor{mistyrose}
+    KNN整體模型(K=5) & 0.1170 \\\rowcolor{bubbles}
+    KNN訓練集(K=5) & 0.1145 \\\rowcolor{mistyrose}
+    KNN測試集(K=5) & 0.1628   \\\rowcolor{bubbles}
+    KNN整體模型(K=15) & 0.1430 \\\rowcolor{mistyrose}
+    KNN訓練集(K=15) & 0.1371 \\\rowcolor{bubbles}
+    KNN測試集(K=15) & 0.1550  \\\hline
+    \end{tabular}
+    }
+\end{table}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir la9ldaqdaknn.png}}
+    \caption{資料9-LDA、QDA、KNN}
+    \label{fig:la9-LDAQDAKNN}
+\end{figure}
+
+\section{結語}
+在本文中，我們深入研究了機器學習中三種重要的分類器：線性判別分析(LDA)、二次判別分析(QDA)和最近鄰居法(KNN)。費雪判別分析以其強調類別之間差異的特點而聞名，LDA則在考慮類別共變異數的基礎上進一步提高了分類的效能，而QDA在處理非線性和複雜數據結構時可能更具優勢。與此同時，KNN通過利用鄰近樣本的信息，展現了其在處理複雜邊界和具有局部結構的數據集方面的優勢。
+
+當探討機器學習分類器時，我們發現在實際資料中，QDA、LDA和KNN各自展現出不同的表現特性。在不同情境下，QDA通常較LDA更為適應，其彈性使其能夠更靈活地應對不同類別之間的共變異數結構差異。然而，加入KNN後，我們觀察到在大多數情況下，KNN可能優於QDA，這樣的現象可以歸因於數據分布、共變異數結構、維度和樣本量等多方面因素。QDA在處理非線性和共變異數結構差異較大的數據時具有優勢，但在高維度情境和樣本量較少時可能受到限制。LDA則在高維度情況中相對穩健，而KNN在處理複雜的非線性數據時表現出色。
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

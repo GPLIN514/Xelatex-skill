@@ -1,0 +1,9 @@
+\babel@toc {english}{}\relax 
+\beamer@sectionintoc {1}{何謂區塊鏈}{3}{0}{1}
+\beamer@sectionintoc {2}{Decentralized}{15}{0}{2}
+\beamer@sectionintoc {3}{Etherscan}{21}{0}{3}
+\beamer@sectionintoc {4}{Ethereum}{27}{0}{4}
+\beamer@sectionintoc {5}{BTC V.S. ETH}{40}{0}{5}
+\beamer@sectionintoc {6}{Metamask}{49}{0}{6}
+\beamer@sectionintoc {7}{Smart Contract}{50}{0}{7}
+\beamer@sectionintoc {8}{Solidity \& Remix}{55}{0}{8}

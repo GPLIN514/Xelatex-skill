@@ -1,0 +1,596 @@
+\documentclass[12pt, a4paper]{article}
+\input{preamble_GP_hw4} 
+%-----------------------------------------------------------------------------------------------------------------------
+% 文章開始
+\title{監督式學習之迴歸分群}
+\author{{\KT 林貫原}}
+\date{{\R \today }} 			
+\begin{document}
+\renewcommand{\tablename}{表}	
+\renewcommand{\figurename}{圖}
+\maketitle
+\fontsize{12}{22pt}\selectfont 
+
+
+
+
+
+本文介紹了三種常見的迴歸學習器，包括一般線性迴歸、增廣迴歸以及羅吉斯迴歸，探討它們的學習原理和預測機制。為了更清晰地呈現它們在不同情境下的表現，我們使用了幾組有特定目的的資料，包括兩群組之距離遠近、資料量相同或不同、以及群組內分散程度不同等。首先在範例中，生成了許多資料，同時比較三種迴歸方法在不同情境下的表現，並比較訓練集與測試集的情況。最後，羅吉斯迴歸模型，將其應用在三組自行設定的資料上。透過繪製散佈圖和羅吉斯迴歸的分界線，呈現了模型對於複雜分群情境的適應能力。同時，計算了誤判率，以總結羅吉斯迴歸在不同資料集上的分類表現。綜合以上，本文通過實例演練展示了這三種迴歸學習器在不同情境下的表現，旨在幫助讀者更全面地了解迴歸模型的學習和預測原理，以及在實際應用中的效能比較。
+
+\section{線性迴歸模型(Linear Regression Model)}
+線性迴歸(Linear regression)是統計上在找多個自變數(independent variable)和依變數(dependent variable)之間的關係所建出來的模型。只有一個自變數和一個依變數的情形就稱為簡單線性迴歸(Simple linear regression)，大於一個自變數的情形稱為多元迴歸(multiple regression)。
+
+首先先說明一下什麼是自變數和依變數，自變數是不被其他變數影響的(因)，只會去影響別人；而依變數基本上是被其他變數影響的(果)。舉個生活中的例子：一個人的「長相」會因為她的「皮膚」、「身材」和「臉蛋」所影響，所以自變數為皮膚、身材和臉蛋；而依變數就是長相了。
+
+簡單線性迴歸模型：$$y=\beta_0+\beta_1 x_1$$
+$\beta_0$：截距(Intercept)，$\beta_1$：斜率(Slope)為$x$變動一個單位，$y$變動的量，如圖 \ref{fig:simplelinearregression} 所示:
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.55]{\imgdir simplelinearregression.png}}
+    \caption{簡單線性迴歸模型示意圖}
+    \label{fig:simplelinearregression}
+\end{figure}
+迴歸分析就只是在找$\beta_0$和$\beta_1$，所以要先收集一組資料($x_i$, $y_i$) , $i=1, …,n$，將每個點都帶到迴歸公式內，而預估出來的結果會記為$\hat{y}$，因為是預估的，所以當然會有一些誤差，$\varepsilon$ 就是指誤差項我們稱作殘差(Residual)：
+$$y=\beta_0+\beta_1 x_1,\hat{y}=\hat{\beta}_0+\hat{\beta}_1 x_1+\varepsilon_i$$
+圖 \ref{fig:simplelinearregression2} 表示的是殘差為何？其實就是每個資料點($y_i$)與預估出來的結果($\hat{y}_i$)之間的距離:
+$$\varepsilon=y_i-\hat{y}_i$$
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir simplelinearregression2.png}}
+    \caption{殘差示意圖}
+    \label{fig:simplelinearregression2}
+\end{figure}
+這個$\varepsilon$當然是越小越好，代表我們預估的越準確。所以迴歸分析的目標函數/損失函數(loss function)就是希望找到的模型最終的殘差越小越好，統計上會用一個很專業的名詞最小平方法(Least Square)來找參數($\beta_0$和$\beta_1$)。為什麼叫最小平方法呢？就是希望誤差的平方越小越好，因為誤差值有正有負，取平方後皆為正值，所以我們會很希望所有訓練樣本的誤差平方和(Sum Square error, SSE)接近0。
+$$Loss\left(\hat{\beta}_0,\hat{\beta}_1\right)=\sum_{i=1}^n\left(y_i-\hat{y}_i\right)^2=\sum_{i=1}^n\left(y_i-\left(\hat{\beta}_0+\hat{\beta}_1x_i\right)\right)^2$$
+為了推估$\beta_0$以及$\beta_1$，我們分別對$Loss(\beta_0,\beta_1)$偏微並使其等於0，計算推討過程如下：
+\begin{align*}
+&\frac{\partial Loss\left(\hat{\beta}_0,\hat{\beta}_1\right)}{\partial \beta_0}=\frac{\partial \sum_{i=1}^n\left(y_i-\hat{\beta}_0-\hat{\beta}_1x_i\right)^2}{\partial \beta_0}=0\\
+&\Rightarrow -2\sum_{i=1}^n\left(y_i-\hat{\beta}_0-\hat{\beta}_1x_i\right)=0\\
+&\Rightarrow \hat{\beta}_0=\frac{1}{n}\sum_{i=1}^n\left(y_i-\hat{\beta}_1x_i\right)\\
+&\Rightarrow \hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}
+\end{align*}
+\begin{align*}
+&\frac{\partial Loss\left(\hat{\beta}_0,\hat{\beta}_1\right)}{\partial \beta_1}=\frac{\partial \sum_{i=1}^n\left(y_i-\hat{\beta}_0-\hat{\beta}_1x_i\right)^2}{\partial \beta_1}=0\\
+&\Rightarrow -2\sum_{i=1}^n\left(y_i-\hat{\beta}_0-\hat{\beta}_1x_i\right)x_i=0\\
+&\Rightarrow \sum_{i=1}^n\left(y_i-\hat{\beta}_0-\hat{\beta}_1x_i\right)x_i=0\\
+&\Rightarrow \sum_{i=1}^ny_ix_i-\sum_{i=1}^n\hat{\beta}_1x_i^2-\sum_{i=1}^n\hat{\beta}_0x_i=0\\
+&\Rightarrow \sum_{i=1}^ny_ix_i-\sum_{i=1}^n\left(\bar{y}-\hat{\beta}_1\bar{x}\right)x_i-\hat{\beta}_1\sum_{i=1}^nx_i^2=0\\
+&\Rightarrow \sum_{i=1}^ny_ix_i-\sum_{i=1}^n\bar{y}x_i+\sum_{i=1}^n\hat{\beta}_1\bar{x}x_i-\hat{\beta}_1\sum_{i=1}^nx_i^2=0\\
+&\Rightarrow \hat{\beta}_1\sum_{i=1}^n\left(x_i-\bar{x}\right)x_i=\sum_{i=1}^n\left(y_i-\bar{y}\right)x_i\\
+&\Rightarrow \hat{\beta}_1=\frac{\sum_{i=1}^n\left(y_i-\bar{y}\right)\left(x_i-\bar{x}\right)}{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2}\\
+\end{align*}
+\section{增廣迴歸模型(Augmented Regression Model)}
+增廣迴歸模型(Augmented Regression Model)是一種擴展了一般線性迴歸模型的統計方法。一般線性迴歸模型假設依變數(目標變數)和自變數(解釋變數)之間存在線性關係，但在實際應用中，資料可能包含非線性的特徵，這時候一般線性迴歸模型可能無法有效地擬合資料。
+
+增廣迴歸模型的特點在於，它引入了自變數的多項式項目(高次項)，使模型能夠更靈活地適應複雜的資料分佈。這樣的擴展可以包括自變數平方、交叉項和其他高次方項。這樣的設計讓模型能夠更好地擬合非線性資料，提高預測的準確性。
+
+具體而言，對於一維自變量$x$，一般線性迴歸模型可以表示為：$$y=\beta_0+\beta_1x$$
+
+而增廣迴歸模型則可以表示為：$$y=\beta_0+\beta_1x_1+\beta_2x_2+\dots+\beta_nx_n$$
+其中$x_1,x_2,\dots,x_n$是$x$的高次項，例如$x^2,x^3,\dots$。這樣的擴展提供了更多彈性，讓模型能夠更適應各種形狀的資料分佈。然而，需要注意的是，增廣迴歸模型的引入也增加了模型的複雜性，可能導致過擬合問題，需要謹慎調整模型的複雜度，以避免在訓練資料上表現過於優越但在測試資料上表現不佳。
+
+以下為增廣迴歸模型的一些特點：
+\begin{enumerate}
+\item 增廣迴歸模型通常會將原始特徵進行多項式擴展，生成更多的特徵，這樣可以捕捉到非線性的特徵關係。
+\item  擴展的特徵包括原始特徵的高次方項和交互項。例如，對於原始特徵$X_1$和$X_2$，擴展後可能包含$X_1^2$、$X_2^2$、$X_1X_2$等項。
+\item 由於引入了更多的特徵，增廣迴歸模型可以更靈活地擬合複雜的數據分布，從而提高模型的預測準確性。
+\item 增廣迴歸模型可以適應更多的非線性關係，因此在處理複雜數據時表現較好。
+\item 雖然引入了更多的特徵，但使用正規化可以控制模型的複雜度，避免過擬合的問題。
+\item 在高維空間中，增廣迴歸模型可以更好地進行分類，尤其適用於需要考慮多個特徵交互作用的情境。
+\end{enumerate}
+\section{羅吉斯迴歸模型(Logistic Regression Model)}
+羅吉斯迴歸類似先前介紹過的線性迴歸分析，主要在探討依變數與自變數之間的關係。線性迴歸中的依變數($Y$)通常為連續型變數，但羅吉斯迴歸所探討的依變數($Y$)主要為類別變數，特別是分成兩類的變數(例如：是或否、有或無、同意或不同意……等）。在羅吉斯迴歸分析中，自變數$Y$可以是類別變數，也可以是連續變數。而羅吉斯迴歸有幾個前提假設：
+\begin{itemize}
+\item 羅吉斯分配中，自變數對依變數的影響是以指數的方式做變動，如圖\ref{fig:logistic_curve} ，因此不需要常態分配的假設。
+$$f(x)=\frac{1}{1+e^{-x}}$$
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir logistic_curve.png}}
+    \caption{羅吉斯回歸曲線}
+    \label{fig:logistic_curve}
+\end{figure}
+\item 令依變數$Y$為二元反應的變數(成功或失敗)，$p$為其成功的機率，受自變數$x$所影響，則$p$與$x$之關係如下：
+
+$Y$事件成功的機率：$$p=\frac{exp(\alpha+\beta_1x_1+\beta_2x_2)}{1+exp(\alpha+\beta_1x_1+\beta_2x_2)}$$
+
+$Y$事件失敗的機率：$$1-p=\frac{1}{1+exp(\alpha+\beta_1x_1+\beta_2x_2)}$$
+
+\item 勝算(odds)即事件成功機率與失敗機率的比值：
+$$e^{f(x)}=e^{\alpha+\beta_1x_1+\beta_2x_2}$$
+
+\item 羅吉斯迴歸式：對勝算值(Odds)取自然對數(ln)
+$$ln\left(\frac{p}{1-p}\right)=\alpha+\beta_1x_1+\beta_2x_2$$
+\end{itemize}
+而羅吉斯迴歸模型為：
+$$logit(\pi(x))=ln\left(\frac{\pi(x)}{1-\pi(x)}\right)=\alpha+\beta_1x_1+\beta_2x_2$$
+或者是
+$$\pi(x)=\frac{exp(\alpha+\beta_1x_1+\beta_2x_2)}{1+exp(\alpha+\beta_1x_1+\beta_2x_2)}$$
+所以每當$x_1$增加一單位，勝算就會增加$exp(\beta_1)$倍；每當$x_2$增加一單位，勝算就會增加$exp(\beta_2)$倍，也就代表若$\left|\beta_i\right|\rightarrow0$，則$Y$的$X_i$關係就會變很弱。
+
+
+
+\section{訓練集與測試集}
+先簡單講述一下何謂訓練集及測試集：
+\begin{itemize}
+\item 訓練集(training set)：訓練模型參數用的資料集。用於模型擬合，直接參與了模型參數估計的過程。
+\item 測試集(testing set)：評估模型最終表現，也可以說測試資料泛化(generalize)的能力好不好。當模型遇到沒有見過的資料時，它的表現怎麼樣。為了能評估模型真正的能力，測試集不應該為參數調整、選擇特徵等依據。
+\end{itemize}
+在下一小節中會對各種狀況去進行訓練集及測試集誤判率的計算，理想情況下，我們希望模型在訓練集和測試集上的誤判率都能保持較低的水平，這表示模型在訓練過程中學到數據的特徵並能夠泛化到新數據。而誤判率的含義為：
+\begin{itemize}
+\item 訓練集誤判率：
+\begin{enumerate}
+\item 訓練集誤判率低：如果訓練集的誤判率很低，表示模型在用於訓練的數據上表現良好。模型能夠很好地擬合訓練數據，預測結果與實際標籤相符。
+\item 訓練集誤判率高：如果訓練集的誤判率高，可能表示模型過度擬合(overfitting)，即模型對訓練數據的適應太過程式化，無法泛化到新的數據。
+\end{enumerate}
+\item 測試集誤判率：
+\begin{enumerate}
+\item 測試集誤判率低：如果測試集的誤判率也很低，表示模型在新數據上具有良好的泛化能力。模型不僅能夠擬合訓練數據，還能夠對未見過的數據進行有效預測。
+\item 測試集誤判率高：如果測試集的誤判率高，可能表示模型無法適應新數據，存在欠擬合（underfitting）或過擬合的問題。可能需要調整模型複雜度、特徵工程等來提高模型性能。
+\end{enumerate}
+\end{itemize}
+至於誤判率的高低沒有一個固定的依據，以下為常用的判斷方法：
+\begin{itemize}
+\item 低誤判率：
+\begin{enumerate}
+\item 訓練集：低於5\%或10\%可能被視為較低的誤判率，但這也取決於問題的複雜性和數據的噪聲水平。
+\item 測試集：通常期望和訓練集誤判率相近或稍高一些，低於15\%或20\%可能被視為較低的誤判率。
+\end{enumerate}
+\item 高誤判率：
+\begin{enumerate}
+\item 訓練集：高於20\%、30\%或更高可能被視為較高的誤判率，可能表明模型過度擬合或存在其他問題。
+\item 測試集：高於訓練集誤判率、或在15\%到20\%以上，可能被視為較高的誤判率，表示模型泛化能力較差。
+\end{enumerate}
+\end{itemize}
+然而，這些僅僅是一般性的參考，實際界定「低」和「高」應該根據具體的應用背景和領域知識進行評估。在一些高度敏感的應用中，甚至可能要求更低的誤判率。
+\section{範例}
+本小節所有的資料都是來自於自己生成的，其中一筆資料程式碼如下：
+\begin{lstlisting}[language=Python]
+n1, n2 = 100, 100
+m1, m2 = np.array([0, 0]), np.array([4, 2])
+Cov1 = np.array([[2, 0], [0, 2]])
+Cov2 = np.array([[2, 0], [0, 2]])
+mvn1 = multivariate_normal(mean = m1, cov = Cov1)
+mvn2 = multivariate_normal(mean = m2, cov = Cov2)
+A, B = mvn1.rvs(n1), mvn2.rvs(n2)
+X = np.vstack((A, B))
+y = np.hstack((np.zeros(n1), np.ones(n2)))
+\end{lstlisting}
+\subsection{兩組分散型樣本分群}
+\subsubsection{兩組樣本皆小且距離遠}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn1-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感受，兩筆資料樣本數皆為100。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(4, 2)$，共變異數為2，協方差矩陣皆為$2 \times 2$的單位矩陣。這樣的分布特徵使得兩個組別的數據點在空間中呈現出一定的區隔。
+
+圖 \ref{fig:rdn1-LARline} 運用了三種不同的方法去繪製迴歸線，分別是一般線性回歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、羅吉斯迴歸模型(LR)(咖啡色)，由圖中可發現三種方法畫出來的準確率都相當的高，一般線性迴歸模型相較於其他兩者略低一些。
+
+圖 \ref{fig:rdn1-LARline2} 探討訓練集與測試集的誤判率，設定為常見的$8:2$，由圖中可看到一般線性迴歸模型(藍色)誤判率在測試集比訓練集還低，而增廣型迴歸模型(綠色)與羅吉斯迴歸模型(橘色)測試集的誤判率皆略高於訓練集的誤判率，但我認為還在可接受範圍內。
+
+結論：此種類型的資料適合使用這三種方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir rdn1-LARline.png}}
+    \caption{兩組樣本皆小且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn1-LARline}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn1-LARline2.png}}
+    \caption{兩組樣本皆小且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn1-LARline2}
+\end{figure}
+
+\subsubsection{兩組樣本皆小且距離近}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn2-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感受，兩筆資料樣本數皆為100。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(0.5, 0.5)$，變異數皆為2，協方差矩陣皆為$2 \times 2$的單位矩陣。這樣的分布特徵使得兩個類別的數據點在空間中無法呈現出一定的區隔。
+
+圖 \ref{fig:rdn2-LARline} 則以三種不同的迴歸方法呈現分類線，分別為一般線性回歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。然而，從圖中我們可看出三者的準確率均相當低，即便是增廣型迴歸模型，其準確率也僅達59\%，仍未達到合格水準。
+
+圖 \ref{fig:rdn2-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆高達38\%以上，顯示這三種模型在此數據集上表現皆不穩定，難以準確地進行分類。
+
+結論：此種類型的資料不適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn2-LARline.png}}
+    \caption{兩組樣本皆小且距離近資料加入三種迴歸方法}
+    \label{fig:rdn2-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.54]{\imgdir rdn2-LARline2.png}}
+    \caption{兩樣本皆小且距離近資料之訓練集VS測試集}
+    \label{fig:rdn2-LARline2}
+\end{figure}
+\subsubsection{兩組樣本一大一小且距離遠}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn3-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為100及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，兩組之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(5, 3)$，變異數皆為2，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩組的數據點呈現一定的區隔。
+
+圖 \ref{fig:rdn3-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三種方法的準確率都相當高，特別是一般線性迴歸模型。
+
+圖 \ref{fig:rdn3-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很低，顯示這三種模型在此數據集上表現很穩定，可以準確地進行分類。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn3-LARline.png}}
+    \caption{兩組樣本一大一小且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn3-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn3-LARline2.png}}
+    \caption{兩組樣本一大一小且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn3-LARline2}
+\end{figure}
+
+\subsubsection{兩組樣本一大一小且距離近}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn4-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為100及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(1, 1)$，變異數皆為2，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中沒有呈現一定的區隔。
+
+圖 \ref{fig:rdn4-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現雖然準確率很高，但那是因為紅色點可以輕易區分，但其實此分群相當沒有意義。
+
+圖 \ref{fig:rdn4-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率雖不是相當高，但從圖可發現是因爲其樣本差異所造成的結果。
+
+結論：此種類型的資料不適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn4-LARline.png}}
+    \caption{兩組樣本一大一小且距離近資料加入三種迴歸方法}
+    \label{fig:rdn4-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.55]{\imgdir rdn4-LARline2.png}}
+    \caption{兩組樣本一大一小且距離近資料之訓練集VS測試集}
+    \label{fig:rdn4-LARline2}
+\end{figure}
+
+\subsubsection{兩組樣本皆大且距離遠}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn5-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為500及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(5, 3)$，變異數皆為3，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中呈現一定的區隔。
+
+圖 \ref{fig:rdn5-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三種方法的準確率都很高，特別是一般線性迴歸模型，高達99\%。
+
+圖 \ref{fig:rdn5-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很低，且測試集誤判率還皆比訓練集低，顯示這三種模型在此數據集上表現很穩定，可以準確地進行分類。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir rdn5-LARline.png}}
+    \caption{兩組樣本皆大且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn5-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn5-LARline2.png}}
+    \caption{兩組樣本皆大且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn5-LARline2}
+\end{figure}
+\subsubsection{兩組樣本皆大且距離近}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn6-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為500及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(1, 1)$，變異數皆為3，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中沒有呈現一定的區隔。
+
+圖 \ref{fig:rdn6-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(青綠色)、增廣型迴歸模型(橘色)、以及羅吉斯迴歸模型(咖啡色)。圖中可發現準確率不高，紅色與藍色點趨近均勻分布在一起，因此此分群相當沒有意義。
+
+圖 \ref{fig:rdn6-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很高，迴歸分群方法效果極差。
+
+結論：此種類型的資料不適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn6-LARline.png}}
+    \caption{兩組樣本皆大且距離近資料加入三種迴歸方法}
+    \label{fig:rdn6-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.55]{\imgdir rdn6-LARline2.png}}
+    \caption{兩組樣本皆大且距離近資料之訓練集VS測試集}
+    \label{fig:rdn6-LARline2}
+\end{figure}
+
+
+\subsection{兩組集中型樣本分群}
+\subsubsection{兩組樣本皆小且距離遠}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn7-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。散點圖能夠提供對數據分布和組別之間區分程度，兩筆資料樣本數分別為100及100。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(2, 2)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中呈現一定的區隔。
+
+圖 \ref{fig:rdn7-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三種方法的準確率都很高，特別是增廣型迴歸模型，高達97.5\%。
+
+圖 \ref{fig:rdn7-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很低，顯示這三種模型在此數據集上表現很穩定，可以準確地進行分類。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir rdn7-LARline.png}}
+    \caption{兩組樣本皆小且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn7-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn7-LARline2.png}}
+    \caption{兩組樣本皆小且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn7-LARline2}
+\end{figure}
+\subsubsection{兩組樣本皆小且距離近}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn8-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為100及100。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(1, 1)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中沒有呈現一定的區隔。
+
+圖 \ref{fig:rdn8-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(青綠色)、增廣型迴歸模型(橘色)、以及羅吉斯迴歸模型(咖啡色)。圖中可發現準確率皆有83\%，免強可以接受。
+
+圖 \ref{fig:rdn8-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆落在15\%左右，在可以使用迴歸分群的臨界點。
+
+結論：此種類型的資料免強可以使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn8-LARline.png}}
+    \caption{兩組樣本皆小且距離近資料加入三種迴歸方法}
+    \label{fig:rdn8-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn8-LARline2.png}}
+    \caption{兩組樣本皆小且距離近資料之訓練集VS測試集}
+    \label{fig:rdn8-LARline2}
+\end{figure}
+\subsubsection{兩組樣本一大一小且距離遠}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn9-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。散點圖能夠提供對數據分布和組別之間區分程度，兩筆資料樣本數分別為100及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(2, 2)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中呈現一定的區隔。
+
+圖 \ref{fig:rdn9-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三種方法的準確率都相當高，高達98\%，分類表現相當好。
+
+圖 \ref{fig:rdn9-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很低，都在5\%以內，顯示這三種模型在此數據集上表現很穩定，可以準確地進行分類。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir rdn9-LARline.png}}
+    \caption{兩組樣本一大一小且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn9-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn9-LARline2.png}}
+    \caption{兩組樣本一大一小且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn9-LARline2}
+\end{figure}
+
+
+\subsubsection{兩組樣本一大一小且距離近}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn10-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。散點圖能夠提供對數據分布和組別之間的區分程度，兩筆資料樣本數分別為100及500。在圖中，可以看到兩個組別的數據點分佈在特定區域，兩組之間有一些區分度。此數據分布使用多元常態分佈生成，其中組別A的均值為$(0, 0)$；組別B的均值為$(0.5, 0.5)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中沒有呈現一定的區隔。
+
+圖 \ref{fig:rdn10-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(RM)(咖啡色)。圖中可發現雖然準確率算高，但那是因為紅色點可以輕易區分，但其實此分群相當沒有意義。此圖有刻意將圖拉遠來看，可發現增廣型迴歸模型其實是一條橢圓曲線。
+
+圖 \ref{fig:rdn10-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率雖不是相當高，但從圖可發現是因爲其樣本差異所造成的結果。
+
+結論：此種類型的資料不適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn10-LARline.png}}
+    \caption{兩組樣本一大一小且距離近資料加入三種迴歸方法}
+    \label{fig:rdn10-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn10-LARline2.png}}
+    \caption{兩組樣本一大一小且距離近資料之訓練集VS測試集}
+    \label{fig:rdn10-LARline2}
+\end{figure}
+
+\subsubsection{兩組樣本皆大且距離遠}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn11-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。散點圖能夠提供對數據分布和組別之間區分程度，兩筆資料樣本數分別為500及500。在圖中，可以看到兩個類別的數據點分佈在特定的區域，兩組之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(2.5, 2.5)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中呈現一定的區隔。
+
+圖 \ref{fig:rdn11-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三種方法的準確率都相當高，高達99.5\%，分類表現得幾近完美。
+
+圖 \ref{fig:rdn11-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很低，都在1\%以內，顯示這三種模型在此數據集上表現很穩定，可以準確地進行分類。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir rdn11-LARline.png}}
+    \caption{兩組樣本皆大且距離遠資料加入三種迴歸方法}
+    \label{fig:rdn11-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn11-LARline2.png}}
+    \caption{兩組樣本皆大且距離遠資料之訓練集VS測試集}
+    \label{fig:rdn11-LARline2}
+\end{figure}
+
+
+\subsubsection{兩組樣本皆大且距離近}
+
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn12-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。散點圖能夠提供對數據分布和組別之間的區分程度，兩筆資料樣本數分別為500及500。在圖中，可以看到兩個組別的數據點分佈在特定區域，紅色和藍色點之間有一些區分度。此數據分布使用多元常態分佈生成，其中組別A的均值為$(0, 0)$；組別B的均值為$(1.5, 1.5)$，變異數皆為0.5，協方差矩陣皆為$2 \times 2$的單位矩陣。此分布特徵使得兩個組別的數據點在空間中沒有呈現一定的區隔。
+
+圖 \ref{fig:rdn12-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現準確率皆有95\%左右，分類表現的還不錯。
+
+圖 \ref{fig:rdn12-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆落在10\%以內，迴歸分群的表現還算不錯。
+
+結論：此種類型的資料適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn12-LARline.png}}
+    \caption{兩組樣本皆大且距離近資料加入三種迴歸方法}
+    \label{fig:rdn12-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn12-LARline2.png}}
+    \caption{兩組樣本皆大且距離近資料之訓練集VS測試集}
+    \label{fig:rdn12-LARline2}
+\end{figure}
+\subsection{兩組特殊樣本分群}
+\subsubsection{標準差不同}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn13-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為200及200。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A的均值為$(0, 0)$；組別B的均值為$(1, 1)$，共變異數矩陣分別為「[1, 0.8], [0.8, 1]」以及[[1, 0.2], [0.2, 1]]，協方差矩陣皆為$2 \times 2$的單位矩陣。
+
+圖 \ref{fig:rdn13-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現準確率不高，約75\%，表現的不是非常好。
+
+圖 \ref{fig:rdn13-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，無論是一般線性回歸模型、增廣型迴歸模型，還是羅吉斯迴歸模型，無論是在訓練集還是測試集上，誤判率皆很高，迴歸分群方法效果極差。
+
+結論：此種類型的資料不適合使用這三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir rdn13-LARline.png}}
+    \caption{兩組樣本皆大且距離近資料加入三種迴歸方法}
+    \label{fig:rdn13-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn13-LARline2.png}}
+    \caption{兩組樣本皆大且距離近資料之訓練集VS測試集}
+    \label{fig:rdn13-LARline2}
+\end{figure}
+\subsubsection{交叉型}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn14-LARline} 看到其散佈情形，紅色點代表組別A，藍色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，兩筆資料樣本數分別為200及200。在圖中，可以看到兩個類別的數據點分佈在特定的區域，紅色和藍色點之間有一些區分度。這個數據分布是使用多元常態分佈生成的，其中組別A以及組別B的均值皆為$(2, 5)$，共變異數矩陣分別為[[1, -2], [-2, 6]]以及[[5, 3], [4, 5]]，協方差矩陣皆為$2 \times 2$的單位矩陣。
+
+圖 \ref{fig:rdn14-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現增廣型迴歸模型的表現相較於另外兩者明顯高上不少，且位於可使用的臨界點。
+
+圖 \ref{fig:rdn14-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，增廣型迴歸模型的誤判率相較於另外兩者明顯低上不少，且位於可使用的臨界點。
+
+結論：此種類型的資料適合使用增廣型迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir rdn14-LARline.png}}
+    \caption{兩組樣本交叉型資料加入三種迴歸方法}
+    \label{fig:rdn14-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn14-LARline2.png}}
+    \caption{兩組樣本交叉型資料之訓練集VS測試集}
+    \label{fig:rdn14-LARline2}
+\end{figure}
+\subsubsection{雙圓型}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn15-LARline} 看到其散佈情形，綠色點代表組別A，橘色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，樣本數為700。在圖中，可以看到兩個類別的數據點分佈在特定的區域，綠色和橘色點之間有一些區分度。這個數據分布是使用圓形函數生成的，其中組別A以及組別B的均值皆為$(0,0)$。
+
+圖 \ref{fig:rdn15-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現增廣型迴歸模型的表現完美，而另外兩者剛好將其切一半，只有50\%的準確率。
+
+圖 \ref{fig:rdn15-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。然而，增廣型迴歸模型的誤判率為完美的0\%，另外兩者明顯表顯差勁。
+
+結論：此種類型的資料適合使用增廣型迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn15-LARline.png}}
+    \caption{兩組樣本雙圓型資料加入三種迴歸方法}
+    \label{fig:rdn15-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir rdn15-LARline2.png}}
+    \caption{兩組樣本雙圓型資料之訓練集VS測試集}
+    \label{fig:rdn15-LARline2}
+\end{figure}
+\subsubsection{月亮型}
+首先生成一個二維數據集，可以從圖 \ref{fig:rdn16-LARline} 看到其散佈情形，綠色點代表組別A，橘色點代表組別B。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，樣本數為700。在圖中，可以看到兩個類別的數據點分佈在特定的區域，綠色和橘色點之間有一些區分度。這個數據分布是使用圓形函數生成的，其中組別A以及組別B的均值皆為$(0,0)$。
+
+圖 \ref{fig:rdn16-LARline} 以三種不同的迴歸方法呈現分類線，分別為一般線性迴歸模型(SLR)(青綠色)、增廣型迴歸模型(ARM)(橘色)、以及羅吉斯迴歸模型(LR)(咖啡色)。圖中可發現三者準確度差不多，表現都還算不錯。
+
+圖 \ref{fig:rdn16-LARline2} 則進一步研究訓練集與測試集的誤判率，設定為典型的$8:2$比例。三種方法無論是在訓練集抑或是測試集，誤判率都在10\%左右，表現都還算可以，剛好落在普遍認定的低誤判率。
+
+結論：此種類型的資料適合三種迴歸方法。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir rdn16-LARline.png}}
+    \caption{兩組樣本月亮型資料加入三種迴歸方法}
+    \label{fig:rdn16-LARline}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir rdn16-LARline2.png}}
+    \caption{兩組樣本月亮型資料之訓練集VS測試集}
+    \label{fig:rdn16-LARline2}
+\end{figure}
+\subsection{三組樣本分群}
+\subsubsection{兩組樣本重疊}
+圖 \ref{fig:rdn17-scatter} 呈現了一個二維數據集的散點圖，紅色點代表組別A，藍色點代表組別B，綠色點代表組別C。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，樣本數為400。
+
+在圖 \ref{fig:rdn17-scatter} 中，可以看到三個組別的數據點分佈在特定的區域。這個數據分布有刻意做設定，使兩組混合在一起，而第三組離得較遠，探討此種情況的分群結果如何。
+
+圖 \ref{fig:rdn17-LR-result} 以羅吉斯迴歸模型做分群。圖中可發現綠色點與其他兩組分得很好，但紅色與藍色點因均勻分配，大概只能分一半，因此準確率大概約為75\%左右而已。
+
+結論：此種類型的資料不適合三種迴歸方法。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir rdn17-scatter.png}}
+    \caption{兩組樣本重疊散佈圖}
+    \label{fig:rdn17-scatter}
+\end{figure}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=1.2]{\imgdir rdn17-LR-result.png}}
+    \caption{兩組樣本重疊資料加入三種迴歸方法}
+    \label{fig:rdn17-LR-result}
+\end{figure}
+
+
+\subsubsection{三組樣本重疊}
+圖 \ref{fig:rdn18-scatter} 呈現了一個二維數據集的散點圖，紅色點代表組別A，藍色點代表組別B，綠色點代表組別C。每個點的座標表示數據點在兩個特徵($X_1$和$X_2$)上的取值。這樣的散點圖能夠提供對數據分布和組別之間的區分程度的直觀感，樣本數為400。
+
+在圖 \ref{fig:rdn18-scatter} 中，可以看到三個組別的數據點分佈在特定的區域。這個數據分布有刻意做設定，使紅色點與綠色點混合在一起，而綠色點再與藍色點混合在一起，探討此種情況的分群結果如何。
+
+圖 \ref{fig:rdn18-LR-result} 以羅吉斯迴歸模型做分群。圖中可發現三種顏色的點分散在一起，因此分群的表現很差，準確率大概約為67\%左右而已。
+
+結論：此種類型的資料不適合三種迴歸方法。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir rdn18-scatter.png}}
+    \caption{三組樣本重疊散佈圖}
+    \label{fig:rdn18-scatter}
+\end{figure}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=1.1]{\imgdir rdn18-LR-result.png}}
+    \caption{三組樣本重疊資料加入三種迴歸方法}
+    \label{fig:rdn18-LR-result}
+\end{figure}
+\subsection{總結}
+\begin{center}
+  \begin{tabular}{lcccc}
+    \hline \rowcolor{magicmint}
+    分佈 & 距離  & 樣本  & 準確度 & 適合使用這三種迴歸方法\\\hline\rowcolor{mistyrose}
+    分散 & 遠    & 小小  & 高 & 皆適合\\\rowcolor{bubbles}
+    分散 & 近    & 小小  & 低 & 皆不適合\\\rowcolor{mistyrose}
+    分散 & 遠    & 大小  & 高 & 皆適合\\\rowcolor{bubbles}
+    分散 & 近    & 大小  & 微高& 皆不適合\\\rowcolor{mistyrose}
+    分散 & 遠    & 大大  & 高 & 皆適合\\\rowcolor{bubbles}
+    分散 & 近    & 大大  & 低 & 皆不適合\\\rowcolor{mistyrose}
+    集中 & 遠    & 小小  & 高 & 皆適合\\\rowcolor{bubbles}
+    集中 & 近    & 小小  & 微高 & 免強可使用\\\rowcolor{mistyrose}
+    集中 & 遠    & 大小  & 高 & 皆適合\\\rowcolor{bubbles}
+    集中 & 近    & 大小  & 微高 & 皆不適合\\\rowcolor{mistyrose}
+    集中 & 遠    & 大大  & 高 & 皆適合\\\rowcolor{bubbles}
+    集中 & 近    & 大大  & 高 & 皆適合\\\hline
+    \end{tabular}
+\end{center}
+以上僅列出兩樣本的各種情況，因為在其他較複雜的情況，增廣型的迴歸模型大多都會表現的最好，而從上表來看，可以清楚發現距離遠的畫分群效果表現的都很好，不太會有問題，但距離近的話就需要看情況了，像樣本皆大且分佈是集中的情況下就適合使用，其他的五種可能就不太能。
+
+
+\section{結語}
+在以上的實驗結果中，我們針對兩種樣本情況展示了不同迴歸方法在不同距離和分佈條件下的表現。從表中可以清晰地看出，在距離較遠的情況下，各種迴歸方法都能表現出良好的效果，群體的分佈差異較大，使得分類較為明顯，難以出現問題。然而，在距離較近的情況下，不同的分佈和準確度對迴歸方法的適用性產生了顯著的影響。當樣本較小且分佈較為分散時，各種迴歸方法均表現出較好的效果，準確度較高，適合使用。相反，當樣本較大且分佈較為集中時，迴歸方法的表現較為微妙，需要根據具體情況權衡利弊。
+
+通過對這些簡單情況的分析，我們可以得出一個初步的結論：在複雜的實際情況中，增廣型的迴歸模型往往能夠取得較好的效果。對於距離較近的樣本，尤其是分佈集中的情況，需要更謹慎選擇合適的迴歸方法。這些發現為進一步的研究提供了有益的參考，有助於更好理解和應用迴歸模型在實際問題中。
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

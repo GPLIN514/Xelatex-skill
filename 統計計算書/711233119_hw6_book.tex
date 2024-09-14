@@ -1,0 +1,289 @@
+\chapter{類神經網路：解開機械手臂與圖形辨識之謎}
+人工智慧的興起帶動了類神經網路(ANN)技術的迅速發展。這種技術模擬了人類大腦神經元的運作方式，使得機器能夠學習、理解和做出智能決策。本文將探索ANN在機械手臂和圖形辨識中的引人注目的應用。機械手臂的靈活性和智能化得益於ANN的發展，而圖形辨識技術則賦予機器理解視覺信息的能力同時，圖形辨識技術的崛起使得機器能夠理解並解釋視覺信息。讓我們一同深入瞭解，類神經網路如何推動機械手臂和圖形辨識技術的創新，並展望這些技術共同演進的未來。這是一場探索科技奇蹟的冒險，讓我們一同啟程。
+
+\section{背景介紹}
+神經網路是人工智慧中的一種方法，指導電腦以受人腦啟發的方式來處理資料。這是一種機器學習，使用類似於人腦分層結構中的互連節點或神經元。它會建立一種可讓電腦用來從錯誤中學習並持續改善的適應型系統。因此，人工神經網路嘗試以更高準確度來解決複雜的問題，例如總結文件或識別面部。
+
+圖 \ref{fig:ANN(hidden1)} 描繪了一個具有單一隱藏層的典型前饋式類神經網路。其中，一些重要的數字需要特別注意。在左側的輸入端(Input)，標示為 $p$ 個變數(在圖中 $p = 2$)，代表著輸入的維度。中間的隱藏層（Hidden Layer）包含 $q$ 個神經元(在圖中 $q = 10$)，而右側的輸出層(Output Layer)則有 $r$ 個輸出變數(在圖中 $r = 2$)。輸入和輸出變數的數量 $p$ 和 $r$ 取決於問題的結構。例如，在本文的機器手臂範例中，$p = 2$ 可能表示平面座標位置，而 $r = 2$ 可能代表機器手臂的兩個角度。值得注意的是，隱藏層和輸出層的結構，特別是隱藏層中包含的神經元數量 $q$。當 $q$ 較大時，表示輸入和輸出之間的關係較為複雜。從數學的角度來看，這代表著輸入和輸出之間的關係呈現較高的非線性程度。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir 前饋式類神經網路示意圖.png}}
+    \caption{前饋式類神經網路示意圖}
+    \label{fig:ANN(hidden1)}
+\end{figure}
+
+假設輸入端的 $p$ 個變數表示為 $x_1, x_2,\dots , x_p$，輸出端的 $r$ 個變數表示為$\hat{y}_1, \hat{y}_2,\dots , \hat{y}_r$，則前饋式類神經網路的輸出與輸入間的數學關係寫成
+\begin{equation}\label{eq:ANN-1}
+\hat{y}_k=\sum_{i=1}^q\omega^2_{ki}g\left(\sum_{j=1}^p\omega^1_{ij}x_j\right)+b^2_k,1\leq k\leq r
+\end{equation}
+其中函數 $g(·)$ 可以選擇為($−1\leq g(z)\leq 1$)
+\begin{equation}\label{eq:ANN-2}
+g(z)=c_1\frac{1-e^{c_2z}}{1+e^{c_2z}}
+\end{equation}
+函數 $g(z)$ 的形狀如同圖 \ref{fig:ANN(hidden1)} 隱藏層中所示的函數圖。這個函數 $g(z)$ 也可應用在輸出層，以增加模型的複雜度，但通常使用如圖 \ref{fig:ANN(hidden1)} 中所示的線性函數 $y = x$，即輸出層呈現一條直線方程式。在式(\ref{eq:ANN-1})中，$w^1_{ij}$ 與 $b^1_i$ 代表第一個隱藏層的第 $i$ 個神經元對應第 $j$ 個輸入的權重係數(Weightings)與偏差(Biases)。同樣地，$w^2_{ki}$ 與 $b^2_k$ 則是第二層(即輸出層)的第 $k$ 個神經元對應前一隱藏層的第 $i$ 個輸出的權重係數與偏差。
+
+類神經網路根據已知的輸入與輸出資料 $x_j(n)$ 與 $y_k(n)$，調整權重係數 $w^1_{ij}$、$w^2_{ki}$、$b^1_i$ 與 $b^2_k$，使得實際資料 $y_k(n)$ 與類神經網路輸出資料 $\hat{y}_k(n)$ 的誤差最小化。假設有 $N$ 筆實際資料，類神經網路的訓練階段可以被表述為一個多變量函數最小值的問題，即
+\begin{equation}\label{eq:ANN-3}
+\min_{\Omega} e(\Omega)
+\end{equation}
+其中函數函數為
+\begin{align}\label{eq:ANN-4}\nonumber
+e(\Omega)&=\sum_{n=1}^N\sum_{k=1}^r\left(y_k(n)-\hat{y}_k(n)\right)^2 \\
+&=\sum_{n=1}^N\sum_{k=1}^r\left(y_k(n)-\sum_{i=1}^q\omega^2_{ki}g\left(\sum_{j=1}^p\omega^1_{ij}x_j+b^1_i\right)+b^2_k\right)^2
+\end{align}
+其中參數$\Omega=\left\{\omega^1_{ij},\omega^2_{ki},b^1_i,b^2_k \right\}_{i=1,2,\dots,q;j=1,2,\dots,p;k=1,2,\dots,r}$，共$pq+qr+q+r$個參數。類神經網路被認為是高度複雜且具有高維度的模型，其包含的參數數量取決於網路的結構。以我們在圖 \ref{fig:ANN(hidden1)} 中呈現的類神經網路為例(其中$p=2$，$q=10$，$r=2$)，誤差函數$e(\Omega)$ 共涉及超過100個變數。然而，隨著類神經網路的興起，其面臨的是計算高維度最小值的挑戰。當輸入變數($p$)和所選擇的隱藏層神經元數量($q$)增加時，追求更完美的訓練(即$e(\Omega)$越小)將不可避免地需要更大的計算量，這導致了計算時間的過長，讓研發人員感到望而卻步。
+
+儘管如此，隨著電腦軟硬體的提升和演算法的成熟，類神經網路的學習能力逐漸被推向「量產」的程度。這帶動了新一輪的人工智慧潮流，特別是深度學習在機器學習中的應用，充分發揮了類神經網路的擬合能力。然而，另一個阻礙機器學習進程的因素是實際應用的可行性。儘管類神經網路在訓練階段可以將輸入與輸出之間的關係完美地擬合，但在面對實際的測試資料時，其表現可能不如預期。這一現象與隱藏層數、神經元數量和訓練程度等因素密切相關。因此，測試的多樣性和長時間的測試變得非常重要，這也導致了類神經網路的實際應用價值受到一些質疑。接下來的範例中，我們將透過機器人手臂的案例展示不同訓練過程可能導致不同的測試結果。
+\section{機械手臂}
+圖 \ref{fig:機械手臂角度示意圖} 展現了一個擁有較低自由度(DOF，Degree of Freedom)的機械手臂，包含兩節手臂，分別長度為 $\theta _1 = 20$ 和 $\theta _2 = 10$。這兩節手臂隨著角度 $\theta _1$ 和 $\theta _2$ 的變動而運動，使得手臂最前端的位置 ($x, y$) 能夠覆蓋圖 \ref{fig:兩截式機械手臂所及範圍與訓練資料分布點} 第一象限的陰影區域。簡而言之，這表示機械手臂的前端指頭或夾具能夠觸及到該區域。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir 機械手臂角度.png}}
+    \caption{機械手臂角度示意圖}
+    \label{fig:機械手臂角度示意圖}
+\end{figure}
+
+式 (\ref{eq:ANN-5}) 與式(\ref{eq:ANN-6}) 描述機械手臂如何算出 $\theta _1$與$\theta _2$的解:
+\begin{align}\label{eq:ANN-5}\nonumber
+FKE&:\\ \nonumber
+x&=l_1cos(\theta _1)+l_2cos(\theta_1+\theta _2)\\
+y&=l_1sin(\theta_1)+l_2sin(\theta_1+\theta _2)
+\end{align}
+\begin{align}\label{eq:ANN-6}\nonumber
+IKE&:\\ \nonumber
+\theta_2&=cos^{-1}\left(\frac{x^2+y^2-l^2_1-l^2_2}{2l_1l_2}\right)\\
+\theta_1&=tan^{-1}\left(\frac{y}{x}\right)-tan^{-1}\left(\frac{l_2sin(\theta _2)}{l_1+l_2cos(\theta _2)}\right)
+\end{align}
+圖 \ref{fig:兩截式機械手臂所及範圍與訓練資料分布點} 表示若給定座標($x,y$)，第二段機械手臂所能觸及的範圍並生成均勻的點。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir ann3.png}}
+    \caption{兩截式機械手臂所及範圍與訓練資料分布點}
+    \label{fig:兩截式機械手臂所及範圍與訓練資料分布點}
+\end{figure}
+圖 \ref{fig:神經元個數不同時配適表現} 主要是在探討如何使用類神經網路(ANN)來配適具有複雜形狀的資料分布，且不同神經元個數(10,20,50,100)的設置下，其表現的如何。先簡單介紹本文會使用到的一些指標：
+\begin{itemize}
+\item R square ($R^2$):衡量模型相對於平均值的解釋力，值越接近1表示模型解釋方差的能力越好。
+\item Root Mean Square Error (RMSE):衡量模型預測值和實際值之間誤差的平方根，值越小表示模型預測的準確性越高。
+\item Loss Function:衡量模型在訓練過程中的性能，值越小表示配適效果越好。
+\item Number of Iterations:表示模型訓練的迭代次數。
+\end{itemize}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.465]{\imgdir ann4.png}}
+    \caption{神經元個數不同時配適表現}
+    \label{fig:神經元個數不同時配適表現}
+\end{figure}
+
+根據表 \ref{tb:神經元個數不同時配適表現} 的指標，可以發現到隨著隱藏層的數量增加，表現能力也會有些許的增加，均方根誤差下降，損失函數下降，迭代次數大幅下降。
+
+\begin{table}[h]
+\centering
+    \caption{神經元個數不同時配適表現指標} \label{tb:神經元個數不同時配適表現}
+    \renewcommand{\arraystretch}{1.5}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{指標}}{\textbf{神經元個數}}} & \cellcolor{bubbles}{$10$個} & \cellcolor{bubbles}{$20$個} & \cellcolor{bubbles}{$50$個} & \cellcolor{bubbles}{$100$個} \\
+\hline
+\cellcolor{mistyrose}{R square} & \cellcolor{cream}{0.9934} & \cellcolor{cream}{0.9973} & \cellcolor{cream}{0.9977} & \cellcolor{cream}{0.9976} \\
+\hline
+\cellcolor{mistyrose}{Root Mean square error} & \cellcolor{cream}{0.0012} & \cellcolor{cream}{0.0005} & \cellcolor{cream}{0.0005} & \cellcolor{cream}{0.0005} \\
+\hline
+\cellcolor{mistyrose}{The Loss function} & \cellcolor{cream}{0.0012} & \cellcolor{cream}{0.0008} & \cellcolor{cream}{0.0005} & \cellcolor{cream}{0.0013} \\
+\hline
+\cellcolor{mistyrose}{Number of iterations} & \cellcolor{cream}{3339} & \cellcolor{cream}{2821} & \cellcolor{cream}{2361} & \cellcolor{cream}{1740} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+接下來討論一下類神經網路的演算法，其種類有非常多種，比如說 Adagrad、RMSprop、Adadelta等等，但此處因為我們使用的Python套件是MLPRegressor，其只支援LBFGS 、SGD、ADAM演算法，所以僅討論這三種，可以從圖 \ref{fig:不同演算法的配適表現} 及表 \ref{tb:不同演算法的配適表現} 發現在此處，面對隱藏層為30的情況下BLFGS的表現相對來得比較好。
+
+\vspace{20pt}
+\begin{table}[h]
+\centering
+    \caption{不同演算法的配適表現指標} \label{tb:不同演算法的配適表現}
+    \renewcommand{\arraystretch}{1.5}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{指標}}{\textbf{演算法}}} & \cellcolor{bubbles}{LBFGS} & \cellcolor{bubbles}{SGD} & \cellcolor{bubbles}{ADAM}  \\
+\hline
+\cellcolor{mistyrose}{R square} & \cellcolor{cream}{0.9992} & \cellcolor{cream}{0.9599} & \cellcolor{cream}{0.9951} \\
+\hline
+\cellcolor{mistyrose}{Root Mean square error} & \cellcolor{cream}{0.0165} & \cellcolor{cream}{0.1168} & \cellcolor{cream}{0.0582}\\
+\hline
+\cellcolor{mistyrose}{The Loss function} & \cellcolor{cream}{0.0002} & \cellcolor{cream}{0.0068} & \cellcolor{cream}{0.0017} \\
+\hline
+\cellcolor{mistyrose}{Number of iterations} & \cellcolor{cream}{4948} & \cellcolor{cream}{4364} & \cellcolor{cream}{4411}\\
+\hline
+\end{tabular}
+\end{table}
+\vspace{30pt}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.465]{\imgdir ann5.png}}
+    \caption{不同演算法的配適表現}
+    \label{fig:不同演算法的配適表現}
+\end{figure}
+
+
+圖 \ref{fig:均勻落在扇形區的亂數} 及圖 \ref{fig:均勻落在圓形區的亂數} 為自行運用定義函數生成出的亂數，皆有1000個點，至於訓練中，有輸出如表 \ref{tb:生成扇形區亂數的訓練週期} 的結果(圖 \ref{fig:均勻落在扇形區的亂數} )，顯示了在每個訓練週期(Epoch)結束時的模型誤差。每一行代表一個訓練週期，而 "Error" 則是在該週期結束時計算得到模型的誤差值。誤差值是用來評估模型在訓練數據上預測性能的一個指標，表示模型預測值和實際值之間的差異程度。最後一行顯示 "The goal of learning is reached"，這表示模型已經達到預先設定的學習目標(goal)。
+
+\begin{table}[H]
+\begin{center}
+\caption{生成扇形區亂數的訓練週期}\label{tb:生成扇形區亂數的訓練週期}
+\extrarowheight=4pt
+\begin{tabular}{llll}
+\rowcolor[gray]{.9}
+Epoch	   &	 	Error\\
+\toprule
+100&0.11370709105274876\\
+200&0.04612164994856592\\
+300&0.033815021788076154\\
+400&0.028178104130321305\\
+500&0.022168348870310092\\
+600&0.01780327294196251\\
+700&0.016440507537187874\\
+800&0.015011311589278726\\
+900&0.013126301705622047\\
+1000&0.011427963865364231\\
+1100&0.010375537987527397\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir ann6.png}}
+    \caption{均勻落在扇形區的亂數}
+    \label{fig:均勻落在扇形區的亂數}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.56]{\imgdir ann7.png}}
+    \caption{均勻落在圓形區的亂數}
+    \label{fig:均勻落在圓形區的亂數}
+\end{figure}
+圖 \ref{fig:LBFGS演算法不同樣本神經元個數的比較} 探討在LBFGS演算法下，不同樣本與不同隱藏層的比較，先說明其設定配置，左上圖樣本數為1000，神經元個數為20，右上圖樣本數為1000，神經元個數為40，左下圖樣本數為500，神經元個數為20，右下圖樣本數為500，神經元個數為40。在每個子圖中，展示訓練數據訓練集為紫色十字和測試集為金色圓點，以及在測試數據上的預測結果為綠色星號。圖 \ref{fig:LBFGS演算法不同樣本神經元個數訓練誤差的比較} 呈現其訓練過程誤差遞減的情形。
+\begin{enumerate}
+\item 第一次訓練(左上圖)：
+Epoch 900 時，訓練誤差達到了目標。
+測試數據的平方和誤差為 0.069132，表示模型預測與實際值相近。
+\item 第二次訓練(右上圖)：
+Epoch 100 時，訓練誤差達到了目標。
+測試數據的平方和誤差為 0.033680，表示模型預測與實際值相近。
+\item 第三次訓練(左下圖)：
+Epoch 200 時，訓練誤差達到了目標。
+測試數據的平方和誤差為 0.007505，表示模型預測與實際值相近。
+\item 第四次訓練(右下圖)：
+Epoch 100 時，訓練誤差達到了目標。
+測試數據的平方和誤差為 0.040974，表示模型預測與實際值相近。
+\end{enumerate}
+表示使用 LBFGS 方法時，神經網絡在訓練數據取得良好配適，並在測試數據上也取得相對較低的預測誤差。可以解釋模型在未見過的數據具有較好的配適能力，從而對機器手臂的姿勢進行有效預測。
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir trainBFGS.png}}
+    \caption{LBFGS演算法不同樣本神經元個數的比較}
+    \label{fig:LBFGS演算法不同樣本神經元個數的比較}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir trainBFGSde.png}}
+    \caption{LBFGS演算法不同樣本神經元個數訓練誤差的比較}
+    \label{fig:LBFGS演算法不同樣本神經元個數訓練誤差的比較}
+\end{figure}
+
+圖 \ref{fig:CG演算法不同樣本神經元個數的比較} 探討在CG演算法下，不同樣本與不同神經元個數的比較，使用與圖 \ref{fig:LBFGS演算法不同樣本神經元個數的比較} 相同資料，CG 是共軛梯度(Conjugate Gradient)的縮寫。共軛梯度是一種迭代法，通常用於解決線性方程組或最小化函數的問題。它是一種常見的優化算法，特別適用於大型矩陣系統。先說明其設定配置，左上圖樣本數為1000，神經元個數為20，右上圖樣本數為1000，神經元個數為40，左下圖樣本數為500，神經元個數為20，右下圖樣本數為500，神經元個數為40。在每個子圖中，展示了訓練數據訓練集為紫色十字和測試集為金色圓點，以及在測試數據上的預測結果為綠色星號。圖 \ref{fig:CG演算法不同樣本神經元個數訓練誤差的比較} 呈現其訓練過程誤差遞減的情形。總體來說，這表示使用 CG 訓練方法時，神經網絡在訓練數據上取得了良好的配適效果，同時在測試數據上也取得了相對較低的預測誤差。這可以解釋為模型在未見過的數據上具有相對較好的配適能力，從而對機器手臂的姿勢進行了有效的預測。
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir traincg.png}}
+    \caption{CG演算法不同樣本神經元個數的比較}
+    \label{fig:CG演算法不同樣本神經元個數的比較}
+\end{figure}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir traincgde.png}}
+    \caption{CG演算法不同樣本神經元個數訓練誤差的比較}
+    \label{fig:CG演算法不同樣本神經元個數訓練誤差的比較}
+\end{figure}
+\section{圖形辨識}
+類神經網路也普遍被應用在圖形識別上(Pattern Recognition)，一般被歸類為群組判別，
+接著我們使用MNIST資料集，訓練資料有 60,000 筆，每一筆都代表一個 28x28 像素的數字影像，首先查看訓練數據集中的第一張圖片及其對應的結果，第一個圖形是數字 5，圖 \ref{fig:1手寫數字的圖形辨識} 顯示模型預測的結果，表示模型在訓練數據上取得了良好的表現。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=1]{\imgdir number5.png}}
+    \caption{單一手寫數字的圖形辨識}
+    \label{fig:1手寫數字的圖形辨識}
+\end{figure}
+
+圖 \ref{fig:10手寫數字的圖形辨識} 輸出判別結果皆在其圖形正上方，可以發現到辨識前十個圖形每個也都有正確辨識。
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir 10numberpr.png}}
+    \caption{十個手寫數字的圖形辨識}
+    \label{fig:10手寫數字的圖形辨識}
+\end{figure}
+
+圖 \ref{fig:手寫數字辨識數量} 為混淆矩陣，展示預測的個數與真實的個數配對組合，對角線上的每個元素，表示模型正確預測的數量。而圖 \ref{fig:手寫數字辨識準確率} 就是透過正規化60,000筆資料後顯示其正確預測的準確率，在手寫數字上準確率都相當的高，皆超過95\%。而此混淆矩陣是一個 10x10 的矩陣，因為有10個數字類別（0到9）。每一行代表實際類別，每一列代表模型預測的類別。
+ 
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir 手寫數字辨識數量.png}}
+    \caption{手寫數字辨識總數}
+    \label{fig:手寫數字辨識數量}
+\end{figure}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir 手寫數字辨識準確率.png}}
+    \caption{手寫數字辨識準確率}
+    \label{fig:手寫數字辨識準確率}
+\end{figure}
+
+接著看較複雜的手寫字母，可預期的是辨別成果相較於手寫數字會較差，圖 \ref{fig:MNIST中600筆手寫字母} 先展示待會欲實驗的手寫字母資料，此資料是來自 MNIST 資料集。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=1.1]{\imgdir 手寫字母.png}}
+    \caption{MNIST中600筆手寫字母}
+    \label{fig:MNIST中600筆手寫字母}
+\end{figure}
+
+圖 \ref{fig:手寫字母辨識數量} 為混淆矩陣，展示預測的個數與真實的個數配對組合，而圖 \ref{fig:手寫字母辨識準確率} 就是透過正規化後顯示其正確預測的準確率，在手寫字母上準確率的確如預想的一樣，成效沒有比手寫數字來的好，在某些字母上的辨識程度也相當差，但當然還是有表現好的時候。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir 手寫字母辨識數量.png}}
+    \caption{手寫字母辨識總數}
+    \label{fig:手寫字母辨識數量}
+\end{figure}
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir 手寫字母辨識準確率.png}}
+    \caption{手寫字母辨識準確率}
+    \label{fig:手寫字母辨識準確率}
+\end{figure}
+
+圖 \ref{fig:手寫字母辨識損失函數} 是其損失函數，可以藉由函數值遞減的速度，觀察學習的過程順利與否。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir 手寫字母辨識損失函數.png}}
+    \caption{手寫字母辨識損失函數}
+    \label{fig:手寫字母辨識損失函數}
+\end{figure}
+\section{結語}
+在本文中，我們深入探討了類神經網路(ANN)在機械手臂和圖形辨識領域的引人注目應用。通過模擬人腦神經元的運作方式，ANN 技術使得機器能夠學習、理解和做出智能決策，為機械手臂的靈活性和智能化帶來了巨大的提升。同時，圖形辨識技術賦予機器理解視覺信息的能力，為自動化系統的發展帶來了新的契機。
+
+然而，我們也意識到類神經網路在實際應用中面臨著一些挑戰。例如，在訓練過程中，隱藏層數、神經元數量和訓練程度等因素對模型的表現產生著重要影響。此外，雖然類神經網路能夠完美地擬合輸入與輸出之間的關係，但在面對實際的測試資料時，其表現可能不如預期，這使得類神經網路的實際應用價值受到一些質疑。
+
+然而，隨著技術的不斷進步和發展，我們對類神經網路的應用充滿信心。未來，我們期待通過更多的研究和實踐，進一步克服類神經網路在應用中遇到的挑戰，實現更廣泛、更深入的應用。類神經網路的發展將為機器智能和自動化技術帶來更多可能性，並為人類社會的進步做出更大的貢獻。讓我們期待著類神經網路技術在未來的發展中展現出更加璀璨的光芒。
+
+
+

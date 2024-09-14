@@ -1,0 +1,147 @@
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\defaultfontfeatures{Mapping=tex-text}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\usepackage{amsmath, amssymb}
+\usepackage{enumerate}
+\usepackage{graphicx,subfig,float,wrapfig}
+\usepackage[outercaption]{sidecap}
+\usepackage{array, booktabs}
+\usepackage{color, xcolor}
+\usepackage{longtable}
+\usepackage{colortbl}      				
+\usepackage{listings}
+\usepackage[parfill]{parskip}
+\usepackage[left=1.5in,right=1in,top=1in,bottom=1in]{geometry}  %% 建議不要用!!(通常是為了裝訂)
+\usepackage{url}
+\usepackage{gensymb} % 可以用度C
+\usepackage{multirow}
+\usepackage{arydshln}
+% [裡面放設定]{放套件}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{pgf-pie}
+%\usepackage{subfigure}
+%\usepackage{subcaption}
+\usepackage{bm}
+
+% 內文(中文、英文字型)----------------------------------------------------
+\setCJKmainfont[BoldFont=Microsoft YaHei]{新細明體}	    % 粗體字型、設定中文內文字型
+\setmainfont{Times New Roman}		% 設定英文內文字型
+\setsansfont{Arial}					% 無襯字型
+\setmonofont{Courier New}			% 等寬字型
+
+% 英文字型
+\newfontfamily{\E}{Calibri}				
+\newfontfamily{\A}{Arial}
+\newfontfamily{\C}[Scale=0.9]{Arial}
+\newfontfamily{\R}{Times New Roman}
+\newfontfamily{\TT}[Scale=0.8]{Times New Roman}
+
+% 中文字型
+\newCJKfontfamily{\MB}{微軟正黑體}			% 等寬及無襯線字體 Win
+\newCJKfontfamily{\SM}[Scale=0.8]{新細明體}	% 縮小版(Win)
+\newCJKfontfamily{\K}{標楷體}                	% Windows下的標楷體
+\newCJKfontfamily{\BB}{Microsoft YaHei}		% 粗體 Win
+
+% 以下為自行安裝的字型：CwTex 組合
+%\newCJKfontfamily{\CF}{cwTeX Q Fangsong Medium}	% CwTex 仿宋體
+%\newCJKfontfamily{\CB}{cwTeX Q Hei Bold}			% CwTex 粗黑體
+%\newCJKfontfamily{\CK}{cwTeX Q Kai Medium}   	% CwTex 楷體
+%\newCJKfontfamily{\CM}{cwTeX Q Ming Medium}		% CwTex 明體
+%\newCJKfontfamily{\CR}{cwTeX Q Yuan Medium}		% CwTex 圓體
+
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+
+\newcommand{\cw}{\texttt{cw}\kern-.6pt\TeX}	% 這是 cwTex 的 logo 文字
+\newcommand{\imgdir}{../work_1_images/}				% 設定圖檔的目錄位置
+%% ../work_1_images/表示 : 在該檔案(..)的上一個目錄(/)的work_1_images(檔名work_1_images)裡面
+\renewcommand{\tablename}{表}	% 改變表格標號文字為中文的「表」（預設為 Table）
+\renewcommand{\figurename}{圖}% 改變圖片標號文字為中文的「圖」（預設為 Figure）
+
+% 設定顏色 see color Table: http://latexcolor.com
+\definecolor{slight}{gray}{0.9}				
+\definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66} 
+\definecolor{arylideyellow}{rgb}{0.91, 0.84, 0.42}
+\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+\definecolor{cadmiumred}{rgb}{0.89, 0.0, 0.13}
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
+\definecolor{beige}{rgb}{0.96, 0.96, 0.86}
+\definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
+\definecolor{gray(x11gray)}{rgb}{0.75, 0.75, 0.75}
+\definecolor{limegreen}{rgb}{0.2, 0.8, 0.2}
+\definecolor{splashedwhite}{rgb}{1.0, 0.99, 1.0}
+
+%我自己找的-------------------------------------------------
+\definecolor{coolblue}{rgb}{0.0, 0.5, 1.0}
+\definecolor{babypink}{rgb}{0.96, 0.76, 0.76}
+\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
+\definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+\definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+\definecolor{cadetgrey}{rgb}{0.57, 0.64, 0.69}
+\definecolor{camel}{rgb}{0.76, 0.6, 0.42}
+\definecolor{ferngreen}{rgb}{0.31, 0.47, 0.26}
+\definecolor{purpleheart}{rgb}{0.41, 0.21, 0.61}
+\definecolor{peach-orange}{rgb}{1.0, 0.8, 0.6}
+\definecolor{palecornflowerblue}{rgb}{0.67, 0.8, 0.94}
+\definecolor{olivine}{rgb}{0.6, 0.73, 0.45}
+\definecolor{navajowhite}{rgb}{1.0, 0.87, 0.68}
+\definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
+\definecolor{titaniumyellow}{rgb}{0.93, 0.9, 0.0}
+\definecolor{paletaupe}{rgb}{0.74, 0.6, 0.49}
+\definecolor{blue(pigment)}{rgb}{0.2, 0.2, 0.6}  % 用在公式
+%% 要打公式就\textcolor{blue(pigment)}{這邊打公式}
+\definecolor{bostonuniversityred}{rgb}{0.8, 0.0, 0.0} % 用在答案
+\definecolor{black}{rgb}{0.0, 0.0, 0.0}
+\definecolor{cambridgeblue}{rgb}{0.64, 0.76, 0.68}
+\definecolor{bananamania}{rgb}{0.98, 0.91, 0.71}
+\definecolor{gray(x11gray)}{rgb}{0.75, 0.75, 0.75}
+\definecolor{teagreen}{rgb}{0.82, 0.94, 0.75}
+\definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
+\definecolor{honeydew}{rgb}{0.94, 1.0, 0.94}
+\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+\definecolor{aliceblue}{rgb}{0.94, 0.97, 1.0}
+\definecolor{carolinablue}{rgb}{0.6, 0.73, 0.89}
+\definecolor{ceil}{rgb}{0.57, 0.63, 0.81}
+\definecolor{columbiablue}{rgb}{0.61, 0.87, 1.0}
+\definecolor{coolgrey}{rgb}{0.55, 0.57, 0.67}
+\definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
+\definecolor{dimgray}{rgb}{0.41, 0.41, 0.41}
+\definecolor{gold(metallic)}{rgb}{0.83, 0.69, 0.22}
+\definecolor{fuzzywuzzy}{rgb}{0.8, 0.4, 0.4}
+\definecolor{bubblegum}{rgb}{0.99, 0.76, 0.8}
+\definecolor{burgundy}{rgb}{0.5, 0.0, 0.13}
+
+%---------------------------------------------------------------------
+% 映出程式碼 \begin{lstlisting} 的內部設定
+\lstset
+{	language=[LaTeX]TeX,
+    breaklines=true,
+    %basicstyle=\tt\scriptsize,
+    basicstyle=\tt\normalsize,
+    keywordstyle=\color{blue},
+    identifierstyle=\color{black},
+    commentstyle=\color{limegreen}\itshape,
+    stringstyle=\rmfamily,
+    showstringspaces=false,
+    %backgroundcolor=\color{splashedwhite},
+    backgroundcolor=\color{slight},
+    frame=single,							%default frame=none 
+    rulecolor=\color{gray(x11gray)},
+    framerule=0.4pt,							%expand outward 
+    framesep=3pt,							%expand outward
+    xleftmargin=3.4pt,		%to make the frame fits in the text area. 
+    xrightmargin=3.4pt,		%to make the frame fits in the text area. 
+    tabsize=2				%default :8 only influence the lstlisting and lstinline.
+}
+
+% 映出程式碼 \begin{lstlisting} 的內部設定 for Python codes
+%\lstset{language=Python}
+%\lstset{frame=lines}
+%\lstset{basicstyle=\SCP\normalsize}
+%\lstset{keywordstyle=\color{blue}}
+%\lstset{commentstyle=\color{airforceblue}\itshape}
+%\lstset{backgroundcolor=\color{beige}}

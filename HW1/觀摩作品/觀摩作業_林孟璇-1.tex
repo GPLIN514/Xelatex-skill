@@ -1,0 +1,880 @@
+\documentclass[12pt, a4paper]{article}
+\input{preamble} 
+
+
+\title{ 氣候變遷的影響與相關理論及解決方法 }
+\author{{\SM 林孟璇 \;\; 學號\;: \small 711233106 }}
+\date{{\TT \today}} 	 
+\begin{document}
+\maketitle
+\fontsize{12}{22 pt}\selectfont
+
+
+全球當前迫切的問題之一就是氣候變遷，所以本文將探討氣候變遷的成因和影響、其背後的科學原理與解決方法，希望這篇文章能夠協助了解氣候變遷相關計算方法和過程。
+
+
+\section{全球暖化}
+氣候系統的改變來自自然或內部運作及對外來力量的改變作出的反應。這些外來力量包括了人為與非人為因素，譬如太陽活動\footnote{太陽活動是太陽所發出太陽輻射的總量變化，及數千年來的光譜分布變化。}、火山活動\footnote{火山噴發分為4種形式:夏威夷式、斯特龍博利式、伏爾坎寧式及培雷式。}及溫室氣體\footnote{包含水蒸氣（$\mathrm{H_{2}O}$)、二氧化碳($\mathrm{CO_{2}}$)，其他還有臭氧（$\mathrm{O_{3}}$）、甲烷（$\mathrm{CH_{4}}$）等。}。\\
+而全球溫暖化(圖\ref{fig:changes_in_average_temperature})造成的影響包括:\textbf{極地冰原融化、海平面上升、淹沒較低窪的沿海陸地}，衝擊低地國及多數國家沿海精華區，並造成全球氣候變遷，導致\textbf{不正常暴雨、乾旱現象}以及\textbf{沙漠化現象擴大}，對於生態體系、水土資源、人類社經活動與生命安全等都會造成很大的傷害。
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{\imgdir changes_in_average_temperature.png}
+  \caption{全球平均氣溫上升(PNG)(自英國國家氣象局)}\label{fig:changes_in_average_temperature}\hspace{1.5cm}
+\end{figure}
+
+
+
+\subsection{溫室氣體}
+
+在地球大氣層排放$\mathrm{CO_{2}}$及$\mathrm{CH_{4}}$，而其他情況不變下，會促使地面升溫，溫室氣體(表\ref{tb:greenhouse_gas})產生天然的溫室效應。如果沒有它，地球溫度會比現在低30\degree C，使地球不適合人類居住。其中一個因全球暖化早成的重要回饋過程就是\textbf{ \textcolor{coolblue}{冰反照率回饋}}(詳見\ref{sec:ice}小節)。
+
+\begin{table}[h]
+\centering
+\caption{溫室氣體}\label{tb:greenhouse_gas} 
+\renewcommand\arraystretch{1.5} % 控制行高
+{
+\begin{tabular}{|c:m{6cm}|}
+\hline
+\rowcolor{titaniumyellow}
+\textbf{溫室氣體名稱}                                            &    \textbf{富集機制} \\ \hline 
+\textcolor{bleudefrance}{水蒸氣}                                &  \cellcolor{palecornflowerblue}{-}   \\ \hdashline
+\multirow{3}{*}{\centering \textcolor{burntorange}{二氧化碳}}   &    \cellcolor{peach-orange}{人類燃燒化石燃料} \\
+                                                               &    \cellcolor{peach-orange}{毀林} \\
+                                                               &    \cellcolor{peach-orange}{生物呼吸作用} \\ \hdashline
+\multirow{3}{*}{\centering \textcolor{cadetgrey}{甲烷}}         &    \cellcolor{beaublue}{腸道發酵作用} \\
+                                                               &    \cellcolor{palecornflowerblue}{水稻} \\
+                                                               &     \cellcolor{palecornflowerblue}{化石燃料運送少量洩漏} \\ \hdashline
+\textcolor{camel}{臭氧}                                         &    \cellcolor{paletaupe}{光線令氧氣產生光化作用} \\ \hdashline
+\textcolor{ferngreen}{氮氧化物}                                  &    \cellcolor{olivine}{工業生產} \\ \hdashline
+\multirow{3}{*}{\centering \textcolor{purpleheart}{一氧化二氮}}  &    \cellcolor{thistle}{生物體的燃燒} \\ 
+                                                                &    \cellcolor{thistle}{燃料} \\
+                                                                &     \cellcolor{thistle}{化肥生產} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{wrapfigure}{R}{0.3\textwidth}
+\centering
+\includegraphics[width=0.2\textwidth]{\imgdir IPCC.jpg}
+\caption{政府間氣候變化專門委員會(IPCC)(JPG)}\label{fig:IPCC}\hspace{1.5cm}
+\end{wrapfigure}
+其中政府間氣候變遷專門委員會(IPCC)(右圖\ref{fig:IPCC})計算全球暖化潛勢的數值，此數值是普遍被接受的數值。一化學物質的全球暖化潛勢，定義為從開始釋放一公斤該物質起，一段時間內輻射效應的對時間積分，相對於同條件下釋放一公斤參考氣體($\mathrm{CO_{2}}$)對應時間積分的比值為：
+\begin{equation}
+\textcolor{blue(pigment)}{GWP(x) = \frac{\int^{TH}_0 a_x \cdot [ x(t) ] dt}{\int^{TH}_0 a_r \cdot [ r(t) ] dt} }
+\end{equation}
+其中$TH$是評估期間長度\;;\;$a_x$是一公斤氣體的輻射效率\;;\;$x(t)$是一公斤氣體在$t=0$時釋放到大氣後，隨時間衰減後的比例。\\
+表(\ref{tb:co_2})是以二氧化碳為評估的全球暖化潛勢。
+\begin{table} [ht]
+    \centering
+    \caption{二氧化碳的全球暖化潛勢}\label{tb:co_2}
+    \renewcommand\arraystretch{2}
+    \resizebox{0.5\textwidth}{!}{
+    \rotatebox[origin=c]{90}{
+    \begin{tabular}{|c|r:rrr|} 
+    \hline
+    \multirow{2}{*}{溫室氣體} &	\multirow{2}{*}{生命期(年)}	& & 評估時間 &\\ \cdashline{3-5}
+    & & 20年  & 100年  	& 500年 	\\\hline\rowcolor{aliceblue}
+    {\BB 甲烷}       & 12 & 72  &  25 & 7.6 	\\\rowcolor{beaublue}
+    {\BB 一氧化二氮}  & 114 & 289  & 298 & 153 	\\\rowcolor{palecornflowerblue}
+    {\BB (HFC-23)氫氟碳化合物}  & 270 & 12,000  &  14,800 & 12,200 \\\rowcolor{carolinablue}
+    {\BB (HFC-134a)氫氟碳化合物}  & 14 & 3,830  &  1,430 & 435 \\\rowcolor{ceil}
+    {\BB 六氟化硫}       & 3,200 & 16,300  &  22,800 & 32,600 	\\\rowcolor{coolgrey}
+    {\BB 全氟三丁胺}   & - & - & 7,100 & -  \\\hline
+    \end{tabular}
+    }}
+\end{table}
+
+
+
+\subsection{冰照率回饋} \label{sec:ice}
+大氣層中增加$\mathrm{CO_{2}}$暖化了地球表面，導致兩極冰塊溶解(圖\ref{fig:influence})。陸地與開放水域便佔據更多的地方。兩者比冰的反射還要少，所以吸收了更多太陽輻射。這樣使變暖加劇，到頭來促使更多冰塊溶化，循環不斷持續。
+\begin{figure} [h]
+    \centering
+    \subfloat[冰川融化(JPG)(截自Pexels)]{\includegraphics[scale=0.2]{\imgdir glacial_melting.jpg}}\hspace{0.5cm} 
+    \subfloat[海平面上升(PDF)(截自Greenpeace綠色和平)]{\includegraphics[scale=0.15]{\imgdir sea_level_rise.pdf}}
+    \caption{暖化帶來的影響}\label{fig:influence}
+\end{figure}
+
+
+因為地球的熱力慣性與對其他間接效應的緩慢反應，地球現今的氣候在不斷增加的溫室氣體下變得不平衡。氣候行為研究指出，縱使人類立即達成零碳排放，令溫室氣體維持現今的水平，全球平均溫度可能仍然會上升攝氏0.5\;\degree C ～1\;\degree C。
+
+\subsubsection{反照率計算舉例}
+已知\;:\;海冰反照率=\;0.8、海水反照率=\;0.07 \\
+令M\;=北極地區平均反照率，x\;=北極地區海冰量佔面積比例 ($0<x<1$)\\
+則北極地區的反照率計算如式(\ref{eq: reflectivity })\;:
+
+\begin{equation}\label{eq: reflectivity } 
+\textcolor{blue(pigment)}{M = 0.8x+0.07\big(1-x\big)}
+\end{equation}
+
+由此可知，海冰覆蓋率對平均反照率將會是一正比的關係，如圖\ref{fig:reflect}\footnote{(引用:Ice寶寶不回家-冰反照率正回饋機制與北極海冰量、海表面溫度的探討)}。
+
+\begin{figure} [hbt]
+  \centering
+  \includegraphics[width=0.7\textwidth]{\imgdir reflectivity.jpg}
+  \caption{海冰覆蓋率對平均反照率(JPG)}\label{fig:reflect}
+\end{figure}
+
+\subsection{白色天空和黑色天空的反照率}
+結果顯示有許多的應用程式涉及地面的反照率，特別是太陽天頂角$\theta_i$的反照率，可以是合理且近似對稱的兩個術語項的總和。在太陽天頂角的定向半球反射率$\bar{\alpha}(\theta_i)$，和雙向半球反射率$\bar{\bar{\alpha}}$，所占比例和被定義為瀰漫性照明$D$所占比例有關。反照率$\alpha$可以表示為：
+\begin{equation}
+\textcolor{blue(pigment)}{\alpha = (1-D)\bar{\alpha}(\theta_i)+D\bar{\bar{\alpha}}}
+\end{equation}
+
+\subsection{陸地的反照率}
+
+地球的表面反照率在可見光範圍內呈現多樣性，從{\BB 新雪}的高反照率0.9$\;\sim\;$黑色木炭的極低反照率0.04不等。而一些如{\BB 深邃洞穴}的地區，甚至可能接近完美的黑體，其有效反照率極低。{\BB 海洋表面}的反照率通常較低。而{\BB 沙漠地區}和一些地形則有較高的反照率。大部分陸地地區的反照率介於0.1$\;\sim\;$0.4之間。地球的平均反照率約為0.3，主要受到雲層的影響，因為{\BB 雲層}的反照率高(整理見表\ref{tb:reflectivity_2})。
+
+\begin{table}[h]
+\centering
+    \caption{標本反照率} \label{tb:reflectivity_2}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=2pt
+\begin{tabular}{c:c} \rowcolor{dimgray}
+    \textcolor{white}{\textbf{表面}} & \textcolor{white}{\textbf{典型的反照率}}	\\
+    \rowcolor{lightgray}新製的瀝青     & 0.04            \\
+    \rowcolor{gray(x11gray)}陳舊的瀝青 & 0.12            \\
+    \rowcolor{lightgray}針葉林(夏天)   & 0.09$\;\sim\;$0.15  \\
+    \rowcolor{gray(x11gray)}落葉樹    & 0.15$\;\sim\;$0.18   \\
+    \rowcolor{lightgray}裸土  	     & 0.17            \\
+    \rowcolor{gray(x11gray)}綠草地  	 & 0.25            \\
+    \rowcolor{lightgray}荒蕪的沙漠  	 & 0.40            \\
+    \rowcolor{gray(x11gray)}新混凝土   & 0.55           \\
+    \rowcolor{lightgray}海冰          & 0.5$\;\sim\;$0.7        \\
+    \rowcolor{gray(x11gray)}新雪      & 0.8$\;\sim\;$0.9        \\
+\end{tabular}
+\end{table}
+
+\subsection{天文反照率}
+行星、衛星和小行星的反照率可以用於推斷它們的性質。對於不能以望遠鏡解析、又小又遠的天體，我們大多研究他們的反照率。例如:絕對反照率可以指示太陽系天體表面的冰含量，反照率與相位角的變化給了有關風化層性質，而不尋常的雷達高反照率是小行星金屬含量的指示。\\
+在天文學中常見的兩種反照率是幾何反照率(照明直接來自觀測者的後方)和球面反照率(測量各種電磁能量反射所佔的比例)。而它們的值大不相同，所以通常會造成混淆。\\
+天文學的幾何反照率、絕對星等和直徑之間的相關性如式\ref{eq:relation2}
+\begin{equation} \label{eq:relation2}
+\textcolor{blue(pigment)}{A = \left( \frac{1329 \times 10^{\frac{H}{5}}}{D} \right)^2}
+\end{equation}
+其中$A$為天文學的反照率，$D$是以公里為單位的直徑，和$H$為絕對星等。
+
+
+\section{溫室氣體濃度與輻射強度的關係}
+\subsection{Stefan-Boltzmann Law}
+此定律為熱力學中的一個著名的定律。表示一個黑體表面單位面積在單位時間內，輻射出的總能量\footnote{稱為物體的輻射度或能量通量密度}，$j^{*}$與黑體本身的設立學溫度$T$ 的四次方成正比，如式(\ref{eq: SB_law})：
+
+\begin{equation} \label{eq: SB_law}
+\textcolor{blue(pigment)}{j^*\;=\;\epsilon \sigma T^4}
+\end{equation}
+
+
+其中輻射度$j^{*}$具有功率密度的因次\footnote{因次\;=\;$\frac{\text{能量}}{\text{時間}\cdot\text{距離}^2}$}，$\epsilon$ 為黑體的輻射係數；若為絕對黑體，則$\epsilon =1$。\\
+而比例係數$\sigma$稱為斯特凡-波茲曼常數。可由自然界其他已知的基本物理常數算得。此常數的值如式(\ref{eq:coefficient of sigma})
+
+\begin{align} \label{eq:coefficient of sigma}
+\sigma &= \frac{2 \pi^5 k^4}{15 c^2 h^3} \notag \\
+       &= 5.6700400(40)*10^{-8}Js^{-1}m^{-2}K^{-4}
+\end{align}
+
+
+\subsection{Stefan-Boltzmann Law的推導}
+斯特凡-波茲曼定律能夠方便地通過對黑體表面各點的輻射譜強度應用普朗克黑體輻射定律(式(\ref{eq:Planck's Law}))。
+
+\begin{equation}\label{eq:Planck's Law}
+\textcolor{blue(pigment)}{
+\begin{split} 
+I_{v}(v,T)       &= \frac{2hv^3}{c^2}\frac{1}{\exp^{\frac{hv}{kT}}-1} \\
+I_{\lambda}(v,T) &= \frac{2hc^2}{\lambda^5}\frac{1}{\exp^{\frac{hv}{\lambda kT}}-1}
+\end{split}
+}
+\end{equation}
+
+其中$I_{v}$或$I_{\lambda}$為輻射率，$v$為頻率，$\lambda$為波長，$T$為黑體的溫度，$h$為普朗克常數，$c$為光速，$k$為波茲曼常數。
+而其中這兩個函數並不等價，他們之間存在有如式(\ref{eq:relation})的關係:
+\begin{equation} \label{eq:relation}
+\textcolor{blue(pigment)}{I_{v}(v,T) = - I_{\lambda}(v,T)}
+\end{equation}
+通過單位頻率間隔和單位波長間隔之間的關係，這兩個函數可相互轉換：
+\begin{equation}
+\begin{split} \notag
+dv &= d(\frac{c}{\lambda}) \\
+   &= cd(\frac{1}{\lambda})\\
+   &= - \frac{c}{\lambda ^2} d \lambda
+\end{split}
+\end{equation}
+
+
+再將結果在輻射進入的半球形空間表面以及所有可能輻射頻率進行積分得到。
+
+\begin{equation} \label{eq:int}
+j^* = \int^\infty_0 dv \int^{}_{\Omega_{0}} d\Omega I(v,T)\cos(\theta)
+\end{equation}
+
+式(\ref{eq:int})中$\lambda_0$黑體表面一點的輻射進入的半球型空間表面(以輻射點為求心)，$I_{v}(v,T)$為在溫度$T$時黑體表面的單位面積在單位時間、單位立體角上輻射出的頻率為$v$的電磁波能量。式(\ref{eq:int})中包括了一個餘弦因子，因為黑體輻射幾何上嚴格符合朗伯餘弦定律（Lambert's cosine law）。
+將幾何微元關係$d \Omega = \sin(\theta)d \theta d \phi$代入式(\ref{eq:int})並積分得式(\ref{eq:int2})：
+
+\textcolor{blue(pigment)}{
+\begin{align} \label{eq:int2}
+j^* &= \int^\infty_0 dv \int^{2 \pi}_0 d \phi \int^{\frac{\pi}{2}}_0 d \theta I(v,T) \cos(\theta) \sin(\theta) \notag \\ %不然會有6跟7
+    &= \frac{2 \pi^5 k^4}{15 c^2 h^3} T^4
+\end{align}}
+
+\subsection{數學式練習}
+這邊放上一些老師在上課時給的數學式呈現的練習，並同時附上指令:
+\begin{equation}
+W_{MA} = \frac{ \bigg( \sum_{j=1}^n a_j U_{(j)} \bigg)^2 }{ ( \bm{ X_0 - \bar{X}} )^\prime  A^{-1} ( \bm{X_0 - \bar{X}} ) }
+\end{equation}
+\begin{lstlisting}
+\begin{equation}
+W_{MA} = \frac{ \bigg( \sum_{j=1}^n a_j U_{(j)} \bigg)^2 
+         }{(\bm{ X_0 - \bar{X}})^\prime A^{-1}(\bm{X_0 
+         - \bar{X}})}
+\end{equation}
+\end{lstlisting}
+
+\begin{equation}
+D_{n,\beta} = \int \mid \psi_n(t)-exp \; \bigg( - \frac{\| \; t \; \|^2}{2}  \bigg) \mid^2 \psi_B(t)dt
+\end{equation}
+\begin{lstlisting}
+\begin{equation}
+D_{n,\beta} = \int \mid \psi_n(t)-exp \; \bigg( - \frac
+              {\|\; t \; \|^2}{2}  \bigg) \mid^2\psi_
+              B(t)dt
+\end{equation}
+\end{lstlisting}
+
+\begin{equation}
+SR = n \left(  \frac{2}{n} \sum_{j=1}^2 E \| y_j - Z \| -2\frac{\Gamma(\frac{(p+1)}{2})}{\Gamma(\frac{p}{2})} -\frac{1}{n^2} \sum_{j,k=1}^n \|y_j \; - \; y_k \| \right)
+\end{equation}
+\begin{lstlisting}
+\begin{equation}
+SR = n \left(  \frac{2}{n} \sum_{j=1}^2 E \| y_j - Z
+     \| -2\frac{\Gamma(\frac{(p+1)}{2})}{\Gamma(\frac
+     {p}{2})} -\frac{1}{n^2} \sum_{j,k=1}^n \|y_j \;
+     - \; y_k \| \right)
+\end{equation}
+\end{lstlisting}
+
+\begin{equation}
+\theta = \begin{pmatrix}
+            \theta_1 \\
+            \theta_2 
+         \end{pmatrix} 
+       = \begin{pmatrix}
+            \theta_{10} \\
+            \theta_{11} \\
+            \theta_{12} \\
+            \theta_{20} \\
+            \theta_{21} \\
+            \theta_{22}
+         \end{pmatrix} \; ,
+D = \left( \begin{array}{cc}
+              D11 & D12 \\
+              D21 & D21
+           \end{array} \right) \\
+  = \begin{bmatrix}
+       \begin{array}{ccc|ccc}
+              a & b & c & g & h & i \\
+              b & d & e & h & j & k \\
+              c & e & f & i & k & l \\  \hline
+              g & h & i & m & n & o \\
+              h & j & k & n & p & q \\
+              i & k & l & o & q & r
+       \end{array}
+    \end{bmatrix}
+\end{equation}
+\begin{lstlisting}
+\begin{equation}
+\theta = \begin{pmatrix}
+            \theta_1 \\
+            \theta_2 
+         \end{pmatrix} 
+       = \begin{pmatrix}
+            \theta_{10} \\
+            \theta_{11} \\
+            \theta_{12} \\
+            \theta_{20} \\
+            \theta_{21} \\
+            \theta_{22}
+         \end{pmatrix} \; ,
+D = \left( \begin{array}{cc}
+              D11 & D12 \\
+              D21 & D21
+           \end{array} \right) \\
+  = \begin{bmatrix}
+       \begin{array}{ccc|ccc}
+              a & b & c & g & h & i \\
+              b & d & e & h & j & k \\
+              c & e & f & i & k & l \\  \hline
+              g & h & i & m & n & o \\
+              h & j & k & n & p & q \\
+              i & k & l & o & q & r
+       \end{array}
+    \end{bmatrix}
+\end{equation}
+\end{lstlisting}
+
+\begin{align}
+   \begin{split}
+      Q(\beta, \gamma) &= E \left[ log \left\{ \prod_{i=1}^n [ \pi ( Z_i^*,X_i ) ]^{y_{i}} [1-\pi ( Z_i^*,X_i ) ]^{1-y_{i}} \right\} \right] \\
+                       &= E \left[ log \prod_{i=1} \left\{ \frac{exp(y_{i}(\beta^\prime Z_{i}^* + \gamma^\prime X_{i}))}{1 + exp(y_{i}(\beta^\prime Z_{i}^* + \gamma^\prime X_{i}))} \right\} \right] \\
+                       &= \sum_{i=1}^n y_{i} E[ \beta^\prime Z_{i}^* + \gamma^\prime X_{i} ] \\
+                       &\quad - \sum_{i=1} E \left[ log \left( 1 + exp \left( \sum_{i=1}^j \beta_{j} T_{ij} \theta_{ij} + \gamma X_{i} \right) \right) \right]
+   \end{split}
+\end{align}
+\begin{lstlisting}
+\begin{align}
+\begin{split}
+Q(\beta, \gamma) &= E \left[ log \left\{ \prod_{i=1}^n
+                    [ \pi ( Z_i^*,X_i ) ]^{y_{i}} [1-\pi
+                    ( Z_i^*,X_i ) ]^{1-y_{i}} \right\}
+                    \right] \\
+                 &= E \left[ log \prod_{i=1} \left\{
+                    \frac{exp(y_{i}(\beta^\prime Z_{i}^*
+                    + \gamma^\prime X_{i}))}{1 + exp(y_{i}
+                    (\beta^\prime Z_{i}^* + \gamma^\prime 
+                    X_{i}))} \right\} \right] \\
+                 &= \sum_{i=1}^n y_{i} E[ \beta^\prime
+                    Z_{i}^* + \gamma^\prime X_{i} ] \\
+             &\quad - \sum_{i=1} E \left[ log \left(1 +
+                    exp \left( \sum_{i=1}^j \beta_{j}
+                    T_{ij} \theta_{ij} + \gamma X_{i} 
+                    \right) \right) \right]
+\end{split}
+\end{align}
+\end{lstlisting}
+
+\begin{equation}
+\begin{split}
+P_{m,i} &= \sum_{j=1}^{m-1} {m \choose j} {{m-i-1} \choose {j-1}} p^{i} q^{m-j} \bigg( \frac{\eta_{1}}{\eta_{1} + \eta_{2}} \bigg)^{j-1} \bigg( \frac{\eta_{2}}{\eta_{1} + \eta_{2}} \bigg)^{m-j}, 1 \leq i \leq {m-1}, \\
+Q_{m,i} &= \sum_{j=i}^{m-1} {m \choose j} {{m-i-1} \choose {j-1}} p^{i} q^{m-j} \bigg( \frac{\eta_{2}}{\eta_{1} + \eta_{2}} \bigg)^{j-1} \bigg( \frac{\eta_{1}}{\eta_{1} + \eta_{2}} \bigg)^{m-j}, 1 \leq i \leq {m-1} 
+\end{split}
+\end{equation}
+\begin{lstlisting}
+\begin{equation}
+\begin{split}
+P_{m,i} &= \sum_{j=i}^{m-1} {m \choose j} {{m-i-1}
+           \choose {j-1}} p^{i} q^{m-j} \bigg(
+           \frac{\eta_{1}}{\eta_{1} + \eta_{2}}
+           \bigg)^{j-1} \bigg( \frac{\eta_{2}}{\eta
+           _{1} + \eta_{2}} \bigg)^{m-j}, 1 \leq i 
+           \leq {m-1},\\
+Q_{m,i} &= \sum_{j=i}^{m-1} {m \choose j} {{m-i-1}
+           \choose {j-1}} p^{i} q^{m-j} \bigg(
+           \frac{\eta_{2}}{\eta_{1} + \eta_{2}} 
+           \bigg)^{j-1} \bigg( \frac{\eta_{1}}{\eta
+           _{1} + \eta_{2}} \bigg)^{m-j}, 1 \leq i
+           \leq {m-1} 
+\end{split}
+\end{equation}
+\end{lstlisting}
+
+\begin{equation}
+\Lambda(t) = \exp \left( \int^t_0 \xi(\mu) \cdot dW(t) - \frac{1}{2} \int^t_0 \| \xi(\mu) \|^2 du + (\lambda-\tilde{\lambda})t \right) \prod_{i=1}^{N(t)}\frac{\tilde{\lambda} \tilde{f}(Y_i)}{\lambda f(Y_i)}
+\end{equation}
+
+\begin{lstlisting}
+\begin{equation}
+\Lambda(t) = \exp \left( \int^t_0 \xi(\mu) \cdot dW(t) -
+             \frac{1}{2} \int^t_0 \| \xi(\mu) \|^2 du +
+             (\lambda-\tilde{\lambda})t \right) \prod_
+             {i=1}^{N(t)}\frac{\tilde{\lambda} \tilde{f}
+             (Y_i)}{\lambda f(Y_i)}
+\end{equation}
+\end{lstlisting}
+
+\begin{align}
+\begin{split}
+Caplet_{n+1}^{U\&I}(0) &= B(0,T_{n+1}) E^{pT_{n+1}} \big[\delta(L(T_n,T_n)-K)^+I_{\{M_{T_n}^L\geq U\}}+ RI_{\{M_{T_n}^L\leq U \}}] \\
+                       &= B(0,T_{n+1}) \Bigg\{ \underbrace{\delta E^{pT_{n+1}} \big[L(T_n,T_n)I_{\{L(T_n,T_n) \geq K,M_{T_n}^L\leq U \}} ]}_{B.1} \\
+                       &\quad - \delta K \underbrace{P^{T_{n+1}}(L(T_n,T_n) \geq K,M_{T_n}^L\leq U )}_{B.2} + R \underbrace{P^{T_{n+1}}(M_{T_n}^L\leq U)}_{B.3} \Bigg\}
+\end{split}
+\end{align}
+\begin{lstlisting}
+\begin{align}
+\begin{split}
+Caplet_{n+1}^{U\&I}(0) &= B(0,T_{n+1}) E^{pT_{n+1}}
+                          \big[\delta(L(T_n,T_n)-K)^+
+                          I_{\{M_{T_n}^L\geq U\}}+
+                          RI_{\{M_{T_n}^L\leq U \}}] \\
+                       &= B(0,T_{n+1}) \Bigg\{
+                          \underbrace{\delta E^{pT_{n+1}}
+                          \big[L(T_n,T_n)I_{\{L(T_n,T_n)
+                          \geq K,M_{T_n}^L\leq U \}} ]}
+                          _{B.1} \\
+                   &\quad - \delta K \underbrace{P^{T_
+                         {n+1}}(L(T_n,T_n) \geq K,M_
+                         {T_n}^L\leq U )}_{B.2} + R
+                         \underbrace{P^{T_{n+1}}(M_{T_n}
+                         ^L\leq U)}_{B.3} \Bigg\}
+\end{split}
+\end{align}
+\end{lstlisting}
+
+
+
+\section{大氣中溫室氣體的濃度變化}
+氣候科學家利用化學動力模型和數學方程式來模擬大氣中溫室氣體，例如二氧化碳($\mathrm{CO_2}$)、甲烷($\mathrm{CH_4}$)和氧氣($\mathrm{O_2}$)的濃度變化。這些方程式通常基於質量守恒和化學反應動力學原理。
+
+\subsection{質量守恆定律}
+對於任何一個物質和能量的所有轉移都封閉的系統而言，{\K 系統的質量必須隨時間推移保持不變}。又因系統質量不能改變，所以系統的量既不能添加亦不能移除，所以質量的量值隨著時間變化並不改變而是守恆的。這定律意味著質量既不能被創造也不能被破壞，儘管它可能在空間中重新排列，或者與之相關的實體可能在形式上發生變化，例如在化學反應中，{\K 反應前化學成分的質量是等於反應後分子的總質量}。
+
+\subsubsection{化學中的質量守恆定律}
+化學反應裡面，物質的元素數目無論在反應前或反應後都相同。化學反應中的質量守恆包括原子守恆、電荷守恆、元素守恆等幾個方面。以下舉簡單例子說明:\\
+一化學反應$X+Y \rightarrow Z+W$，反應前$X$有10g，Y有20g，反應後$X$剩2g，Y則全部用完。已知產生Z有12g，則$W$有多少g?\\
+而根據質量守恆定律得知，反應前反應物的總質量等於反應後生成物的總質量
+\begin{equation}
+(10-2)+20 = 12 + W
+\end{equation}
+所以
+\begin{equation}
+W = 28 - 12 = \textcolor{bostonuniversityred}{16g}
+\end{equation}
+
+
+
+\subsection{化學動力學原理}
+化學動力學研究化學反應的{\K 反應速率}及{\K 反應機理}。它的主要研究領域包括分子反應動力學、催化動力學、基元反應動力學、宏觀動力學、表觀動力學等，也可依不同化學分支，分類為有機反應動力學及無機反應動力學。從一種動態的角度觀察化學反應，研究{\K 反應系統轉變所需要的時間}，以及這之中涉及的{\K 微觀過程}。\\
+其中，反應速率為化學反應快慢的量度，參與反應的物質的量隨時間的變化量的絕對值，分為平均速率與瞬時速率兩種。其中影響反應速率的因素有:溫度、濃度、催化劑等。
+
+\subsubsection{速率方程}
+前面提到濃度和反應速率有關，我們這邊簡單介紹一下速率方程。他是利用反應物濃度或分壓計算化學反應的方程。對於一個化學反應$mA+nB \rightarrow C$，化學反應的速率方程如下:
+\begin{equation}
+\textcolor{blue(pigment)}{r \;=\; - \frac{1}{m} \frac{d[A]}{dt} \;=\; k[A]^{x}[B]^{y}}
+\end{equation}
+其中$[X]$表示一種給定的反應物$X$的活度。$k$表示這一反應的速率常數，通常可透過阿瑞尼斯方程式(\textbf{Arrhenius equation})求得式(\ref{eq:arrhenius1})和式(\ref{eq:arrhenius2})。
+
+\begin{align}
+\textcolor{blue(pigment)}{k}   &= \textcolor{blue(pigment)}{A \exp{-\frac{E_{a}}{RT}}} \label{eq:arrhenius1} \\
+\textcolor{blue(pigment)}{lnk} &= \textcolor{blue(pigment)}{-\frac{E_{a}}{RT} + lnA} \label{eq:arrhenius2}
+\end{align}
+
+
+\subsubsection{阿瑞尼斯方程式(Arrhenius Equation)}
+由式(\ref{eq:arrhenius1})和式(\ref{eq:arrhenius2})可以看出$lnk$隨$T$的變化率與$E_a$(活化能)成正比。因此活化能越高，隨著溫度升高，反應速率增加得越快，也就是說反應速率對溫度越為敏感。當存在多個反應，而它們的活化能值各不相同時，高溫對於活化能較高的反應有較大的促進作用，而低溫對於活化能較低的反應有較大的促進作用。\\
+而活化能$E_a$也可以定義為如式(\ref{eq:activation_energy}):
+\begin{equation} \label{eq:activation_energy}
+\textcolor{blue(pigment)}{E_a \equiv -R \left[ \frac{\partial lnk}{\partial (\frac{1}{T})}  \right]_P}
+\end{equation}
+
+而\textbf{Arrhenius Equation}還可以有其他形式:
+\subsubsection*{微分形式}
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{d lnk}{d T} = \frac{E_a}{RT^2}}
+\end{equation}
+
+\subsubsection*{積分形式}
+\begin{equation}
+\textcolor{blue(pigment)}{ln\frac{k_2}{k_1} = - \frac{E_a}{R} \left( \frac{1}{T_2} - \frac{1}{T_1} \right)}
+\end{equation}
+
+\subsubsection*{其他形式}
+\begin{equation}
+\textcolor{blue(pigment)}{T_{AF} = \frac{L_n}{L_s} = \exp \left[ \frac{E_a}{k} \left( \frac{1}{T_2} - \frac{1}{T_1} \right) \right]}
+\end{equation}
+其中$L_n$為正常狀況下的使用壽命，$L_s$為加速測試下的使用壽命;$T_n$為正常狀況下的絕對溫度，$T_s$表示加速測試下的絕對溫度。\\
+
+\textbf{Arrhenius Equation}一般適用於溫度變化範圍不大的情況，而這時$A$和$E_a$變化不大，所以阿瑞尼斯方程式有很好的適用性。但若溫度範圍較大，則\textbf{Arrhenius Equation}會產生殘留誤差，此時會常用式(\ref{eq:modify})對阿瑞尼斯方程式進行修正：
+\begin{equation} \label{eq:modify}
+\textcolor{blue(pigment)}{k = A \left( \frac{T}{T_0} \right)^n e^{-\frac{E_a}{RT}}}
+\end{equation}
+
+如果$n=0$，就得到未修正的\textbf{Arrhenius Equation}，所以也可以利用廣延指數式(\ref{eq:modify_2})進行修正:
+\begin{equation} \label{eq:modify_2}
+\textcolor{blue(pigment)}{k = Ae\left[ -\left( \frac{E_a}{RT} \right)^\beta \right]}
+\end{equation}
+
+\subsubsection*{各級反應表格整理}
+表\ref{tb:organization}為微分速率方程、積分速率方程、速率常數k的單位、呈線性關係的變量以及半衰期的各級反應的整理。
+
+\begin{table}
+\centering
+\caption{各級反應表格整理}\label{tb:organization}
+\renewcommand\arraystretch{2}
+\arrayrulecolor{burgundy} %下面如果還有表格，要改回來black，讓他重新定義默認值
+\resizebox{0.5\textwidth}{!}{
+\rotatebox[origin=c]{90}{
+\begin{tabular}{|c:cccc|} \hline \rowcolor{bubblegum}
+\cellcolor{white}{}  & \textcolor{burgundy}{\BB 零級反應} & \textcolor{burgundy}{\BB 一級反應} & \textcolor{burgundy}{\BB 二級反應} & \textcolor{burgundy}{\BB n級反應} \\ \hline
+\textcolor{burgundy}{\cellcolor{bubblegum}{\K 微分速率方程}} & $-\frac{d[A]}{dt}=k$ & $-\frac{d[A]}{dt}=k[A]$ & $-\frac{d[A]}{dt}=k[A]^2$ & $-\frac{d[A]}{dt}=k[A]^n$ \\ \hdashline
+\textcolor{burgundy}{\cellcolor{bubblegum}{\K 積分速率方程}} & $[A]=[A]_0-kt$ & $[A]=[A]_0 \exp{-kt}$ & $\frac{1}{[A]}=\frac{1}{[A]_0}+kt$ & $\frac{1}{[A]^{n-1}}=\frac{1}{[A]_0^{n-1}}+(n-1)kt$ \\ \hdashline
+\textcolor{burgundy}{\cellcolor{bubblegum}{\K 速率常數k的單位}} & $\frac{M}{s}$ & $\frac{1}{s}$ & $\frac{1}{M \cdot s}$ & $\frac{1}{M^{n-1}\cdot s}$ \\ \hdashline
+\textcolor{burgundy}{\cellcolor{bubblegum}{\K 呈線性關係的變量}} & $[A]-t$ & $ln([A])-t$ & $\frac{1}{[A]}-t$ & $\frac{1}{[A]^{n-1}}-t$ \\ \hdashline
+\textcolor{burgundy}{\cellcolor{bubblegum}{\K 半衰期}} & $t_{\frac{1}{2}}=\frac{[A]_0}{2k}$ & $t_{\frac{1}{2}}=\frac{ln(2)}{k}$ & $t_{\frac{1}{2}}=\frac{1}{[A]_0k}$ & $t_{\frac{1}{2}}=\frac{2^{n-1}-1}{(n-1)k[A]_0^{n-1}}$ \\ \hline
+\end{tabular}
+}}
+\end{table}
+
+
+\subsubsection{可逆反應}
+可逆反應指的是反應物與產物形成化學平衡的反應，其中{\BB 正向和逆向反應同時進行}，而且{\BB 反應速率相等}。它可以用式(\ref{eq:reversible})來表示：
+\begin{equation} \label{eq:reversible}
+\textcolor{blue(pigment)}{sA+tB \rightleftharpoons uX+vY}
+\end{equation}
+這裡若我們假設正向($\rightarrow$)反應速率的速率常數為$k_1$，逆向($\leftarrow$)反應速率的速率常數為$k_{-1}$，那麼正向反應的淨速率是正逆反應速率的代數和，也就是說:
+\begin{equation}
+\textcolor{blue(pigment)}{r = k_1 [A]^s [B]^t -k_{-1} [X]^u[Y]^v}
+\end{equation}
+其中$k_1$與$k_{-1}$又恰好可以和反應的平衡常數$K$以式(\ref{eq:coefficient_K})串聯起來:
+\begin{equation}\label{eq:coefficient_K}
+\textcolor{blue(pigment)}{
+\begin{split} 
+k_1 [A]^s [B]^t = k_{-1} [X]^u[Y]^v \\
+K = \frac{[X]^u[Y]^v}{[A]^s [B]^t} = \frac{k_1}{k_{-1}}
+\end{split}}
+\end{equation}
+
+\section{氣候模型方程}
+
+以下為一些可能使用的模型和方程式的說明和示例：
+%\textbf{\ref{sec:1}}:大氣擴散模型
+
+\subsection{大氣擴散模型} \label{sec:1}
+大氣擴散模型是一種用於數學模擬空氣污染物在大氣中擴散的方法。它是通過運用計算機程序來實現的，這些程序包含了一套算法，可以解決控制污染物擴散的數學方程。這些模型被用來估算來自工廠、交通運輸或化學品意外釋放等源頭排放的{\BB 空氣污染物或毒素在順風環境中的濃度}。
+
+\subsubsection{擴散方程式}
+垂直方向上的質量通量為:
+\begin{equation} \label{eq:fick's first law}
+\textcolor{blue(pigment)}{J = - D_{m} \frac{\partial C}{\partial z}}
+\end{equation}
+質量通量的定義為單位時間之內物質流經單位面積的質量總量，因次為($\mathrm{M/L^2/T}$)。$\mathrm{D_m}$為分子擴散係數(Molecular diffusivity或Diffusion coefficient)，因次為($\mathrm{L^2/T}$)。式(\ref{eq:fick's first law})中的負號表示擴散的方向與濃度梯度的方
+向相反，亦即由高濃度往低濃度擴散。式(\ref{eq:fick's first law})又稱為\textbf{Fick's first law}。以下我們用題目\footnote{截自國立中央大學土木系\;朱佳仁教授}來舉例說明。\\
+在無風的狀況下，一守恆性物質由地面揮發至大氣中，使得地表附近的濃度分佈為:
+\begin{equation}
+\textcolor{blue(pigment)}{C(z) = C_{0} \exp^{-\frac{z}{\eta}}} \notag
+\end{equation}
+其中$z$為高度，特徵高度$\eta = 4.0\;$m，地表處($z=0$)，之濃度$C_{o}=5 \times 10^{-3}$ mg/l。該物質之分子擴散係數為$D_{m} = 0.2 \; \text{cm}^2$。\\
+
+\begin{figure} [hbt]
+  \centering
+  \includegraphics[width=0.7\textwidth]{\imgdir fick's_first_law.png}
+  \caption{示意圖(截自國立中央大學土木系\;朱佳仁教授)(PNG)}
+\end{figure}
+
+則地表處之質量通量與一天內該物質揮發置大氣的質量為
+\begin{equation}
+\begin{split} \notag
+J_{z} &= - D_{m} \frac{\partial C}{\partial z} \\
+      &= D \frac{C_{o}}{\eta} \exp^{-\frac{z}{\eta}}
+\end{split}
+\end{equation}
+地表處的質量通量為
+\begin{equation}
+\begin{split} \notag
+J_{z} &= D \frac{C_{o}}{\eta} \\
+      &= 0.2 \times 10^{-4} \text{m}^2/\text{s} \cdot \frac{5 \times 10^{-3} \text{g}/ \text{m}^3} {4.0 \text{m}} \\
+      &= \textcolor{bostonuniversityred}{2.5 \times 10^{-8} \text{g/s} - \text{m}^2}
+\end{split}
+\end{equation}
+一天內揮發的質量為
+\begin{equation}
+\begin{split} \notag
+M_{z} &= J_{z} A \cdot T \\
+      &= 2.5 \times 10^{-8} \text{g/s} - \text{m}^2 \cdot (1000 \cdot 1000 \text{m}^2) \cdot 86400 \text{sec} \\
+      &= \textcolor{bostonuniversityred}{2160 \text{g}}
+\end{split}
+\end{equation}
+
+
+\subsection{碳循環模型}
+碳循環模型的正確構建是影響綜合集程評估模型IAM(Integrated Assessment Model)模擬結果的重要因素之。自1970年代以來，針對全球的氣候變遷政策模擬的綜合集程評估模型得到了廣泛的發展。而在這麼多IAM模型中，DICE/RICE模型是發展較早且得到廣泛應用模型之一。
+
+\subsubsection{DICE/RICE模型中的碳循環及氣候影響建模}
+早期的DICE/RICE模型中，只存在一個大氣碳庫，大氣中碳含量隨時間的變化如式(\ref{eq: change})
+\begin{equation} \label{eq: change}
+\textcolor{blue(pigment)}{M(t)-590 = \beta_{i} E(t-1) + (1-\delta_{m})(M(t)-1)-590)}
+\end{equation}
+式(\ref{eq: change})中的$M(t)$是t階段的大氣含碳量(GtC)，$\beta_{i}$則表示二氧化碳在大氣中的停滯率。\\
+後來將碳循環改進為三層碳庫模型，用方程式表示為式(\ref{eq:improve_1})、(\ref{eq:improve_2})、(\ref{eq:improve_3})
+\begin{align}
+\textcolor{blue(pigment)}{M_{AT}(t)} &= \textcolor{blue(pigment)}{E(t) + \varphi_{11}   + M_{AT}(t-1) + \varphi_{21} M_{UP}(t-1)} \label{eq:improve_1}\\
+\textcolor{blue(pigment)}{M_{UP}(t)} &= \textcolor{blue(pigment)}{\varphi_{12} + M_{AT}(t-1) + \varphi_{22} + M_{UP}(t-1) + \varphi_{32} + M_{LO}(t-1)} \label{eq:improve_2}\\
+\textcolor{blue(pigment)}{M_{LO}(t)} &= \textcolor{blue(pigment)}{\varphi_{23} + M_{UP}(t-1) + \varphi_{33} + M_{LO}(t-1)} \label{eq:improve_3}
+\end{align}
+
+藉由式(\ref{eq: change})和式(\ref{eq:improve_1})描述的大氣含碳量的變化下，全球輻射強迫$F(t)$變化滿足:
+\begin{equation} \label{eq:f_t}
+\textcolor{blue(pigment)}{F(t) = \eta \; \big\{ \log_{2} \big[ M_{AT}(t)/M_{AT}(1750) \big] \big\} + F_{EX}(t)}
+\end{equation}
+其中$M_{AT}(1750)$為1750年工業化以前的大氣含碳量。\\
+而因為DICE/RICE模型主要是評估二氧化碳對全球氣候變化的影響，胃納入其他溫室氣體如甲烷等的影響作用，所以將其他的溫室氣體而導致輻射的強迫變化在式(\ref{eq:f_t})中，以$F_{EX}(t)$考慮W，而$F_{EX}(t)$滿足
+\begin{equation}
+F_{EX}(t) = \left\{ \begin{array}{l}
+        0.2604 + 0.0125t - 0.000034t^2 \;\;\; , \;\; t < 150  \\
+        \multicolumn{1}{c}{1.42} , \; \text{其他}
+      \end{array}\right.
+\end{equation}
+
+增加的輻射強迫最終導致全球溫度上升:
+\begin{align}
+\textcolor{blue(pigment)}{T_{AT}(t)} &= \textcolor{blue(pigment)}{T_{AT}(t-1)+\xi_1 \big\{ F(t)-\xi_2 T_{AT}(t-1)} \label{eq:T_AT}\\
+          &\quad \textcolor{blue(pigment)}{-\xi_3 \big[ T_{AT}(t-1)-T_LO(t-1) \big] \big\}} \notag \\
+\textcolor{blue(pigment)}{T_{LO}(t)} &= \textcolor{blue(pigment)}{T_{LO}(t-1)+\xi_4 \{ T_{AT}(t-1) - T_{LO}(t-1) \} \}} \label{eq:T_LO}
+\end{align}
+式(\ref{eq:T_AT})和式(\ref{eq:T_LO})中，$T_{AT}(t)$表示地表溫度(\degree C)，$T_{AT}(t)$表示深海溫度(\degree C)。
+
+\subsubsection{Svireshev碳循環及氣候影響建模}
+針對DICE/RICE模型中碳循環模型的不足，下面引入Svirezhev等人提出的一個以大氣、陸地生態系統、海洋碳庫為主體的三層零維模型:
+\subsubsection*{陸地生態系統碳循環}
+陸地生態系統碳循環由兩部分組成，為生物碳和土壤碳。定義$N(t)$為陸地植被中的碳(GtC)，則:
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{dN(t)}{dt} = P \big( C,N,T \big) - m(t)N(t)} \label{eq:p_cnt}
+\end{equation}
+
+式(\ref{eq:p_cnt})，$P \big( C,N,T \big)$是植被的年淨初級生產力，單位為GtC/a;$m(t)$為植被中碳逃逸率。但由於Leith認為NPP只與生態條件相關(如溫度、降水)，因此$P \big( C,N,T \big)$進一步又被具體表示為:
+\begin{equation}
+\textcolor{blue(pigment)}{P \big( C,T \big) = P_0\big(1+a_1 T\big)\big(1+a_2(C-C_0)\big)} \label{eq:p_cnt2}
+\end{equation}
+式(\ref{eq:p_cnt2})中，$P_0$表示工業化前的淨初級生產力。\\
+另外式(\ref{eq:p_cnt})中的$m(t)$滿足:
+\begin{equation}
+m(t) = \frac{1}{\tau_B(t)} \label{eq:m_t}
+\end{equation}
+式(\ref{eq:m_t})表示碳在植被中滯留的時間，所以植被碳的逃逸率與其滯留時間成反比。從植被中逃逸出來的碳又分為長期存留和短期存留。前者會轉化為土壤，後者將會以$\mathrm{CO_2}$的形式被釋放出至大氣中。這裡以$\varepsilon$表示長期存留碳占生物質碳溢出總量的比例，則短期存留碳所占的比例為$1-\varepsilon$。因此得到碳含量$S(t)$的傳遞量為:
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{dS(t)}{dt} = \varepsilon m(t)N(t) - \delta(T)S(t)} \label{eq:s_t}
+\end{equation}
+式(\ref{eq:s_t})中的$\delta(T)$為土壤碳分解率。式(\ref{eq:s_t})說明土壤碳的變化量除了吸收來自職被釋放的碳，自身也會透過分解過程釋放部分的碳。\\
+土壤碳的分解率受當期溫度影響定義為:
+\begin{equation}
+\textcolor{blue(pigment)}{\delta(T)=\delta_0(1+a_3T)} \label{eq:delta}
+\end{equation}
+式(\ref{eq:delta})可看出隨溫度升高，土壤碳的分解率也將增加，也將有更多的談從土壤中逃逸到大氣中去。
+
+\subsubsection*{海洋碳循環}
+每一期，海洋碳含量變化不僅受到海洋上一期碳含量水平的影響，同時還受到大氣碳含量水平的影響，也就是部分大氣的碳將融入海洋，得到海洋碳的傳遞量為:
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{dD(t)}{dt} = Q_{OC} = \sigma \bigg[ \bigg( C(t) - C_0 \bigg)-\nu\bigg(D(t)-D_0 \bigg) \bigg]}
+\end{equation}
+其中$\sigma$,$\xi$為相關參數。
+
+\subsubsection*{大氣碳循環}
+在陸地碳循環、海洋碳循環作用下，大氣碳循環的碳傳遞量為:
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{dC(t)}{dt}= -P \big( C,T \big) + (1-\varepsilon)m(t)N(t)+\delta(T)S(t) - Q_{OC}+E(t)}
+\end{equation}
+其中$E(t)$為人類活動時產生的碳排放。
+
+\subsubsection*{氣候子系統}
+Svireshev等人定義的氣候影響模型較為簡單，全球的地表溫度$N(t)$滿足:
+\begin{equation}
+\textcolor{blue(pigment)}{\frac{dT(t)}{dt}=\mu ln \frac{C(t)}{C_0}-\alpha T(t)} \label{eq:T_t}
+\end{equation}
+式(\ref{eq:T_t})的$C(t)$為大氣碳含量，$C_0$為工業化前的大氣碳含量，而$\mu$和$\alpha$為模型參數。
+
+
+
+\section{減緩氣候變遷的策略與技術}
+氣候變遷成為全球關注的話題之一，隨著人類的生活方式和經濟發展，溫室氣體排放量急劇增加，導致全球氣溫上升，極端氣候事件頻繁發生，威脅著人類的健康和生存。在這種情況下我們想要尋找有效的解決方案，來應對氣候變遷問題。以下探討氣候變遷的解決方案，包括降低\textbf{\BB 碳排放、清潔能源、能源效率、植樹造林、建立綠色基礎設施}等方面。
+
+
+
+\subsection{降低碳排放}
+\begin{minipage}{0.6\linewidth}
+在降低碳排放這方面人人有責，\textbf{\BB 個人}可以通過減少開車、減少食用肉類、節約用電等方式減少碳排放;\textbf{\BB 企業}可以通過採用清潔生產技術、提高能源利用效率、使用可再生能源等方式減少碳排放;\textbf{\BB 政府}可以通過立法和政策鼓勵企業和個人減少碳排放，例如徵收碳稅、實施排放限制、鼓勵綠色交通等措施。整理如右表。
+\end{minipage}
+\begin{minipage}{0.4\linewidth}
+\centering
+\extrarowheight=2pt
+\arrayrulecolor{black}
+\begin{tabular}{c:l}
+\rowcolor{cambridgeblue}
+單位	   				&	\multicolumn{1}{c}{方法} \\
+\toprule
+\multirow{2}{*}{個人}  &	多搭乘交通工具 \\
+					&	節約用電 \\ \hdashline
+\multirow{2}{*}{企業} 	&	提高能源利用效率 \\
+					&	使用可再生能源 \\ \hdashline
+\multirow{2}{*}{政府} 	&  	徵收碳稅 \\
+					&	實施排放限制 \\ \bottomrule
+\end{tabular}
+\captionof{table}{降低碳排放的方法}
+\end{minipage}
+
+
+\subsection{清潔能源}
+清潔能源是指不會產生碳排放或產生碳排放極少的能源，例如\textbf{ \BB 太陽能、風能、水能}等。這些能源可以替代化石能源，降低碳排放。而清潔能源的發展還可以促進經濟發展，創造就業機會。
+
+\subsubsection{太陽能}
+太陽能(圖\ref{fig:sun})指來自太陽輻射出的光和熱被不斷發展的一系列技術所利用的一種能量，如\textbf{太陽熱能集熱器、太陽能光電發電、太陽熱能發電}和\textbf{人工光合作用}。通常人類利用太陽能有三個途徑，分別是:光熱轉換、光電轉換和光化學轉換。表\ref{tb:sun}為2015年全球與歐盟太陽能光電裝置前十國之太陽能光電裝置量表格整理。
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{\imgdir 太陽能.jpg}
+  \caption{太陽能(截自Alamy)(JPG)}\label{fig:sun}
+\end{figure}
+
+
+\begin{table}
+  \centering
+  \caption{2015年全球和歐盟的太陽能光電裝置前十國} \label{tb:sun}
+  \begin{minipage}{0.45\linewidth}
+    \centering 
+%    \caption{2015年全球太陽能光電裝置前十國} \label{tb:global}
+    \renewcommand{\arraystretch}{2}
+    \resizebox{\linewidth}{!}{
+      \begin{tabular}{c:c}\rowcolor{gray(x11gray)}
+    \textbf{國家}	& \textbf{太陽能光電裝置量百萬瓦}	\\ \toprule
+    \rowcolor{thistle}中華人民共和國	& 43050       	\\
+    \rowcolor{bananamania}德國  		& 39634         \\
+    \rowcolor{thistle}日本  			& 33300         \\
+    \rowcolor{palecornflowerblue}美國& 25540        	\\
+    \rowcolor{bananamania}義大利     & 18910         \\
+    \rowcolor{bananamania}英國  		& 9077         	\\
+    \rowcolor{bananamania}法國  		& 6549         	\\
+    \rowcolor{cambridgeblue}澳洲  	& 5031         	\\
+    \rowcolor{thistle}印度  		   	& 4964         	\\
+    \rowcolor{bananamania}西班牙  	& 4832         	\\
+      \end{tabular}
+    }
+  \end{minipage} \hfill %水平方向多一點空間
+  \begin{minipage}{0.45\linewidth} %end要緊接著begin，不能空行
+    \centering
+    \renewcommand{\arraystretch}{2}
+    \resizebox{\linewidth}{!}{
+      \begin{tabular}{c:c}
+      \rowcolor{bananamania}
+    \textbf{國家}	& \textbf{太陽能光電裝置量百萬千瓦時}\\ \hline 
+    德國			& 38432    \\
+    義大利  		& 22847    \\
+    西班牙 		& 8264     \\
+    英國  		& 7556     \\
+    法國  		& 6700     \\
+    希臘  		& 3818     \\
+    比利時  		& 2865     \\
+    捷克  	 	& 2261     \\
+    羅馬尼亞     & 1328     \\
+    保加利亞  	& 1302     \\ \bottomrule
+      \end{tabular}
+    }
+  \end{minipage}
+\end{table}
+
+
+\subsubsection{風能}
+風能(圖\ref{fig:wind})指的是由風所產生的能源，它涉及到大規模氣體流動所產生的能量以及其各種應用。其中，最主要的應用之一就是\textbf{風力發電}，它利用風力來驅動風力發電機運轉以生成電力。此外，風能也可以應用於非電力領域，例如在帆船和風車等方面。表(\ref{tb:global wind})為全球風力發電統計的數據。
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{\imgdir 風力發電.jpg}
+  \caption{風力發電(截自地中海亞洲海洋聯盟)(JPG)}\label{fig:wind}
+\end{figure}
+
+\begin{table} [hbtp]
+    \centering
+    \caption{全球風力發電統計} \label{tb:global wind}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=4pt
+    \colorbox{honeydew}{
+    \begin{tabular}{c:rrr} 
+    \rowcolor{lightgreen}
+    \textbf{年分}	& \textbf{裝置量MW} & \textbf{發電量GWh} & \textbf{佔全球發電量比}	\\ \hline
+    \cellcolor{teagreen}{2000} & 17,724 & 31,419 & 0.20\% \\
+    \cellcolor{teagreen}{2001} & 24,521 & 38,390 & 0.24\% \\
+    \cellcolor{teagreen}{2002} & 31,531 & 52,331 & 0.32\% \\
+    \cellcolor{teagreen}{2003} & 39,086 & 62,916 & 0.37\% \\
+    \cellcolor{teagreen}{2004} & 47,403 & 85,116 & 0,48\% \\
+    \cellcolor{teagreen}{2005} & 58,969 & 104,086 & 0.56\% \\
+    \cellcolor{teagreen}{2006} & 74,413 & 132,859 & 0.69\% \\
+    \cellcolor{teagreen}{2007} & 91,894 & 170,686 & 0.85\% \\
+    \cellcolor{teagreen}{2008} & 116,512 & 220,569 & 1.08\% \\
+    \cellcolor{teagreen}{2009} & 151,656 & 275,929 & 1.36\% \\
+    \cellcolor{teagreen}{2010} & 182,901 & 341,565 & 1.58\% \\
+    \cellcolor{teagreen}{2011} & 222,517 & 436,803 & 1.96\% \\
+    \cellcolor{teagreen}{2012} & 269,853 & 523,814 & 2.30\% \\
+    \cellcolor{teagreen}{2013} & 303,113 & 645,721 & 2.75\% \\
+    \cellcolor{teagreen}{2014} & 351,618 & 712,407 & 2.98\% \\    
+    \cellcolor{teagreen}{2015} & 417,144 & 831,826 & 3.42\% \\
+    \cellcolor{teagreen}{2016} & 467,698 & 959,468 & 3.85\% \\
+    \cellcolor{teagreen}{2017} & 514,798 & 1,122,745 & 4.39\% \\
+    \end{tabular}}
+\end{table}
+
+
+而圖(\ref{fig:wind_python_eps})是我自己用Python跑出來的長條圖:
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=0.7\textwidth]{\imgdir 全球風力發電統計.eps}
+  \caption{全球風力發電統計長條圖(EPS)}\label{fig:wind_python_eps}
+\vspace{2cm}
+\end{figure}
+
+
+Listing\ref{python_code}是Python的指令:
+
+\begin{lstlisting}[language=Python, caption=Python code, label=python_code]
+import matplotlib.pyplot as plt
+x1 = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,
+      2010,2011,2012,2013,2014,2015,2016,2017]
+x2 = [1999.8,2000.8,2001.8,2002.8,2003.8,2004.8,2005.8,
+      2006.8,2007.8,2008.8,2009.8,2010.8,2011.8,2012.8,
+      2013.8,2014.8,2015.8,2016.8]   
+h1 = [17724,24521,31531,39086,47403,58969,74413,91894,
+      116512,151656,182901,222517,269853,303113,351618,
+      417144,467698,514798]
+h2 = [31419,38390,52331,62916,85116,104086,132859,
+      170686,220569,275929,341565,436803,523814,645721,
+      712407,831826,959468,1122745]
+plt.bar(x1,h1,color='b',width=0.3, align='edge',
+        label='installed capacity')
+plt.bar(x2,h2,color='r',width=0.3,
+        label='electricity production')
+plt.xlabel('year')
+plt.ylabel('installed capacity vs electricity production')
+plt.legend()
+plt.show()
+\end{lstlisting}
+
+
+
+\subsection{能源效率}
+能源效率是指在維持同樣的生產和生活水平下，使用更少的能源。通過提高能源效率，可以減少對化石能源的需求，降低碳排放。政府可以通過立法和政策,鼓勵企業可以通過採用\textbf{\BB 節能技術、提高產品能效}等方式實現能源效率的提高。此外，個人也可以通過改變生活方式，例如選擇\textbf{\BB 使用節能電器、搭乘大眾運輸}等方式(圖\ref{fig:energy_efficiency})實現能源效率的提高。
+
+\begin{figure}[h]
+    \centering
+    \subfloat[節能電器(JPG)(截自財政部)]{\includegraphics[scale=0.15]{\imgdir 節能電器.jpg}}\hspace{0.5cm}
+    \subfloat[搭乘大眾運輸(PNG)(截自zerozero)]{\includegraphics[scale=0.7]{\imgdir 大眾運輸工具.png}}
+    \caption{實現能源效率的方式}\label{fig:energy_efficiency}
+\end{figure}
+
+
+
+\subsection{植樹造林}
+植樹造林是一種有效的碳捕獲方式，能夠\textbf{\BB 大量吸收二氧化碳}，有助於降低大氣中的溫室氣體濃度。此外，植樹造林還能夠\textbf{\BB 保護水源、預防土壤侵蝕、改善生態環境}等(圖\ref{fig:tree})。因此，政府和社會應該積極支持植樹造林活動。
+\begin{figure} [h]
+    \centering
+    \subfloat[保護水資源(JPG)(截自今周刊)]{\includegraphics[scale=0.18]{\imgdir 保護水資源.jpg}}\hspace{0.5cm} \\
+    \subfloat[預防土壤侵蝕(JPG)(截自聚巧網)]{\includegraphics[scale=0.3]{\imgdir 預防土壤侵蝕.jpg}}\hspace{0.5cm} 
+    \subfloat[改善生態環境(JPG)(截自https://www.sdec.ntpc.edu.tw/epaper/9602/1.htm)]{\includegraphics[scale=0.35]{\imgdir 改善生態環境.jpg}}
+    \caption{植樹造林的好處}\label{fig:tree}
+\end{figure}
+
+
+\subsection{推動綠色金融}
+綠色金融是透過金融工具來推動綠色產業和低碳發展的方法。政府和金融機構可以通過\textbf{\BB 建立綠色基金、發行綠色債券}等方式，引導資金流向綠色產業和低碳發展領域。此外，政府和金融機構還可以透過建立\textbf{\BB 綠色金融指標、構建綠色信貸體系}等方法，促進綠色金融的發展。\\
+
+
+\subsubsection{綠色債券}
+\begin{wrapfigure}{R}{0.45\textwidth}
+\centering
+\includegraphics[width=0.4\textwidth]{\imgdir 證卷櫃檯買賣中心logo.png}
+\vspace{1.5cm}
+\caption{證卷櫃檯買賣中心(PNG)}\label{fig:market_logo}
+\end{wrapfigure}
+是指發行人將所\textbf{募得資金}全用於\textbf{綠色投資計畫或其相關放款}的融資工具，這些投資計畫的範圍可包括：氣候、環保、節能、減碳等。根據臺灣證券櫃檯櫃買賣中心(圖\ref{fig:market_logo})「綠色債券作業要點」的規定，企業所發行的債券，若取具綠色債券資格認可並申請債券為櫃檯買賣，就是所謂的綠色債券。\\
+以企業的角度來說，發行綠色債券與一般融資相比享有四大優點：第一、\textbf{ 利息較低}；第二、\textbf{買家購債意願高}；第三、\textbf{用綠色債券再融資相當便利}；第四、\textbf{可履行企業社會責任}。
+
+
+\subsubsection{綠色基金}
+鼓勵投信事業發行或管理，以投資國內並以\textbf{環保(綠色)、公司治理或企業社會責任(綠色)為主題}之\textbf{ \textcolor{gold(metallic)}{ 基金(含ETFs)或全權委託投資帳戶}}。截至109年底，國內投信事業已發行20檔ESG、公司治理及綠色等相關主題之基金，規模約1,010億元。
+
+
+
+\section{結論}
+面對氣候變遷，我們不能袖手旁觀。政府、企業和個人都應該積極應對，通過多種方式來減少溫室氣體排放，實現經濟和社會的可持續發展。也希望大家更體會到了氣候變遷的重要性，也了解其相關理論與如何改善這樣的問題了。
+
+\begin{figure}[hb]
+\centering
+  \includegraphics[width=0.2\textwidth]{\imgdir 愛地球.jpg}
+  \caption{愛地球(截自世界地球日)(JPG)}
+\end{figure}
+
+
+
+
+\end{document}

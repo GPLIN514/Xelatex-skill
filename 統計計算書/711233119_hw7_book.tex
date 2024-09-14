@@ -1,0 +1,245 @@
+\chapter{蒙地卡羅模擬實驗: 學習器的評比}
+機器學習方法在前幾章節中被介紹，包括線性判別式分析(LDA)、二次判別式分析(QDA)、K-鄰近演算法(KNN)以及類神經網路(ANN)等四種不同的學習器。每一種學習器都有其適合分析的資料形式。而本章節就是要透過觀察多組資料，比較不同學習器在配適和預測結果上的表現，進而更深入了解哪種學習器適合處理特定類型的資料。
+\section{資料評比}
+本節所評比的資料為第五章節中所生成的。因為有些資料是刻意生成不適合做分群的，因此本章節不會將所有資料都做評比，僅挑選合適的幾筆資料，以下會先一一稍微講述使用的資料並放上其散佈圖，之後再放上評比的結果，最後在做總比較。
+
+\subsection{兩群資料}
+\subsubsection{資料1}
+首先第一筆資料是上課提供的la-1.txt，圖 \ref{fig:資料1散佈圖} 為其散佈圖，表 \ref{tb:資料1不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，可以發現到ANN中，擁有20個神經元的模型在訓練和測試階段都表現出色，誤判率相對較低，顯示其對資料的適應性較強。LDA和QDA在兩個階段均呈現穩定的表現，誤判率相對較低，顯示其對資料的判別能力相當穩健。相對而言，KNN的表現相對較差，特別是K=5時，在測試集上的誤判率相對較高，顯示其對這組資料的適應性可能較弱。因此在這次實驗中，ANN(20)表現最佳，建議在相似的應用場景中考慮使用。
+
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir la1scatter.png}}
+    \caption{資料1散佈圖}
+    \label{fig:資料1散佈圖}
+\end{figure}
+
+\begin{table}[h]
+\centering
+    \caption{資料1不同學習器評比結果} \label{tb:資料1不同學習器評比結果}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.0575} & \cellcolor{cream}{0.0648} & \cellcolor{cream}{0.0542} & \cellcolor{cream}{0.0616} & \cellcolor{cream}{0.0441} & \cellcolor{cream}{0.0395} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.0632} & \cellcolor{cream}{0.0707} & \cellcolor{cream}{0.0807} & \cellcolor{cream}{0.0680} & \cellcolor{cream}{0.0395} & \cellcolor{cream}{0.0673} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsubsection{資料4}
+資料4是生成兩組多元常態分佈樣本，第一組的平均值為 $(0, 0)$，而第二個群組的平均值為$(3, 2)$，共變異數矩陣皆為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，且兩組皆包含200個樣本，圖 \ref{fig:資料4散佈圖} 為其散佈圖，表 \ref{tb:資料4不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，根據模擬結果，我們觀察到不同的機器學習模型在訓練和測試階段呈現出相對一致的表現。LDA和QDA在兩個階段都表現優異，誤判率都維持在相對低的水平，顯示其對資料的判別和配適能力較強。KNN在不同的鄰近數(K值)下呈現出穩定的表現，且相較於其他模型，在測試集上的表現相對較為優越。ANN的表現也相當穩定，並且在不同的神經元個數下都達到了較低的錯誤率。
+
+總體而言，這些模擬結果表明所選用的機器學習模型在這組資料上均取得了令人滿意的效果。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir la4scatter.png}}
+    \caption{資料4散佈圖}
+    \label{fig:資料4散佈圖}
+\end{figure}
+
+\begin{table}[h]
+\centering
+    \caption{資料4不同學習器評比結果} \label{tb:資料4不同學習器評比結果}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.0402} & \cellcolor{cream}{0.0405} & \cellcolor{cream}{0.0386} & \cellcolor{cream}{0.0454} & \cellcolor{cream}{0.0437} & \cellcolor{cream}{0.0447} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.0455} & \cellcolor{cream}{0.0461} & \cellcolor{cream}{0.0593} & \cellcolor{cream}{0.0523} & \cellcolor{cream}{0.0446} & \cellcolor{cream}{0.0453} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{資料5}
+資料5是生成兩組多元常態分佈樣本，第一組的平均值為 $(0, 0)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}3 & 2 \\2 & 3 \end{bmatrix}$，而第二個群組的平均值為$(3, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，圖 \ref{fig:資料5散佈圖} 為其散佈圖，表 \ref{tb:資料4不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，觀察模擬結果，我們發現不同的機器學習模型在訓練和測試階段呈現出一致的趨勢。LDA和QDA在兩個階段的誤判率都相對較高，顯示對於這組資料，這兩個模型的配適能力可能受到一定的挑戰。KNN在訓練集上呈現相對低的誤判率，但在測試集上的誤判率相對提升，顯示可能存在過度配適的現象。ANN的表現也呈現出較高的誤判率，這可能是因為模型過於複雜或者需要進一步的參數調整。
+
+總體而言，這些結果提示我們在使用這些模型時需要謹慎選擇，並且可能需要進一步的調優和優化。
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir la5scatter.png}}
+    \caption{資料5散佈圖}
+    \label{fig:資料5散佈圖}
+\end{figure}
+
+\begin{table}[h]
+\centering
+    \caption{資料5不同學習器評比結果} \label{tb:資料5不同學習器評比結果}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.1051} & \cellcolor{cream}{0.1068} & \cellcolor{cream}{0.0888} & \cellcolor{cream}{0.1062} & \cellcolor{cream}{0.1097} & \cellcolor{cream}{0.1091} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.1119} & \cellcolor{cream}{0.1146} & \cellcolor{cream}{0.1166} & \cellcolor{cream}{0.1163} & \cellcolor{cream}{0.1181} & \cellcolor{cream}{0.1153} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsubsection{資料6}
+資料6是生成兩組多元常態分佈樣本，第一組的平均值為 $(-1, 0)$，共變異數矩陣為$\begin{bmatrix}4.5 & 4 \\4 & 4.5 \end{bmatrix}$，而第二個群組的平均值為$(4, 2)$，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，且兩組皆包含200個樣本，圖 \ref{fig:資料6散佈圖} 為其散佈圖，表 \ref{tb:資料6不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，觀察模擬結果，我們發現不同學習模型在訓練和測試階段呈現出一致的趨勢。LDA和QDA在兩個階段的誤判率都相對較高，顯示這兩個模型的配適能力可能受到一定的挑戰。KNN在訓練集上呈現相對低的誤判率，但在測試集上的誤判率相對提升，顯示可能存在過度配適。ANN的表現也呈現出較高的誤判率。
+
+總體而言，這些結果提示我們在使用這些模型時需要謹慎選擇。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.67]{\imgdir la6scatter.png}}
+    \caption{資料6散佈圖}
+    \label{fig:資料6散佈圖}
+\end{figure}
+
+\begin{table}[H]
+\centering
+    \caption{資料6不同學習器評比結果} \label{tb:資料6不同學習器評比結果}
+    \renewcommand{\arraystretch}{1.6}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.0416} & \cellcolor{cream}{0.0378} & \cellcolor{cream}{0.0444} & \cellcolor{cream}{0.0459} & \cellcolor{cream}{0.0403} & \cellcolor{cream}{0.0409} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.0435} & \cellcolor{cream}{0.0395} & \cellcolor{cream}{0.0521} & \cellcolor{cream}{0.0504} & \cellcolor{cream}{0.0486} & \cellcolor{cream}{0.0477} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{三群資料}
+\subsubsection{資料7}
+資料6是生成三組多元常態分佈樣本，第一組的平均值為 $(0.5, -0.2)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}2 & 0.3 \\0.3 & 1 \end{bmatrix}$，第二個群組的平均值為$(2, 2)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0.2 \\0 & 1 \end{bmatrix}$，而第三個群組的平均值為$(-1, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，圖 \ref{fig:資料7散佈圖} 為其散佈圖，表 \ref{tb:資料7不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，觀察模擬結果，LDA和QDA呈現相對較高的誤判率，這可能顯示這兩種方法並不是最理想的選擇，或者資料的特性不夠符合這兩個模型的假設。KNN在訓練集上顯示出相對較低的誤判率，但在測試集上的誤判率有所上升。這可能表明模型在訓練時過度配適，導致在新資料上配適能力較差。ANN在訓練和測試集上均呈現相對較高的誤判率。這可能顯示模型需要更多的優化。
+
+總體而言，這些結果凸顯了模型性能受到多方面因素影響的複雜性，包括模型的複雜度、資料的特性以及參數的選擇。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir la7scatter.png}}
+    \caption{資料7散佈圖}
+    \label{fig:資料7散佈圖}
+\end{figure}
+
+\begin{table}[h]
+\centering
+    \caption{資料7不同學習器評比結果} \label{tb:資料7不同學習器評比結果}
+    \renewcommand{\arraystretch}{1.75}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.1463} & \cellcolor{cream}{0.1458} & \cellcolor{cream}{0.1246} & \cellcolor{cream}{0.1350} & \cellcolor{cream}{0.1421} & \cellcolor{cream}{0.1418} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.1433} & \cellcolor{cream}{0.1442} & \cellcolor{cream}{0.1665} & \cellcolor{cream}{0.1422} & \cellcolor{cream}{0.1418} & \cellcolor{cream}{0.1511} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{資料8}
+資料8是生成三組多元常態分佈樣本，第一組的平均值為 $(0.5, -0.2)$，包含300個樣本，共變異數矩陣為$\begin{bmatrix}5 & 0.3 \\0.3 & 2 \end{bmatrix}$，第二個群組的平均值為$(2, 2)$，包含200個樣本，共變異數矩陣為$\begin{bmatrix}2 & 0.2 \\0 & 1 \end{bmatrix}$，而第三個群組的平均值為$(-1, 2)$，包含100個樣本，共變異數矩陣為$\begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$，圖 \ref{fig:資料8散佈圖} 為其散佈圖，表 \ref{tb:資料8不同學習器評比結果} 為透過學習器評比後的訓練集誤判率及測試集誤判率，觀察模擬結果，LDA的誤判率相對較高，QDA相對於LDA表現稍好，但仍有改進的空間，KNN在鄰近點數量增加時呈現出誤判率下降的趨勢，但在某些情況可能產生過配適。最後，ANN顯示出相對低的誤判率，表現較好且在訓練和測試集上均能保持穩定。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir la8scatter.png}}
+    \caption{資料8散佈圖}
+    \label{fig:資料8散佈圖}
+\end{figure}
+
+\begin{table}[h]
+\centering
+    \caption{資料8不同學習器評比結果} \label{tb:資料8不同學習器評比結果}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{誤判率}}{\textbf{學習器}}} & \cellcolor{bubbles}{LDA} & \cellcolor{bubbles}{QDA} & \cellcolor{bubbles}{KNN(5)} & \cellcolor{bubbles}{KNN(15)} & \cellcolor{bubbles}{ANN(10)} & \cellcolor{bubbles}{ANN(20)} \\
+\hline
+\cellcolor{mistyrose}{training error} & \cellcolor{cream}{0.2241} & \cellcolor{cream}{0.1861} & \cellcolor{cream}{0.1669} & \cellcolor{cream}{0.1881} & \cellcolor{cream}{0.1835} & \cellcolor{cream}{0.1819} \\
+\hline
+\cellcolor{mistyrose}{testing error} & \cellcolor{cream}{0.2272} & \cellcolor{cream}{0.1942} & \cellcolor{cream}{0.2233} & \cellcolor{cream}{0.2116} & \cellcolor{cream}{0.1957} & \cellcolor{cream}{0.1930} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+\subsection{綜合評比}
+為了更好去比較不同的資料與不同的學習器之間的關聯，以下將前麵比較過的所有結果放在一起做比較。
+
+根據以上的表格與折線圖，可初步判斷出LDA與KNN相較於其他的學習器表現相對較不好，而QDA及ANN會是比較好的選擇，當然可能因為資料的不同造成不同的結果，但以本章所評比的資料結果就是如此，讀者也可以自行嘗試其他更多種類型的資料做比較。
+
+表 \ref{tb:訓練集誤判率比較表格} 為六個資料的訓練集在六個學習器模擬中誤判率的比較表格。
+\vspace{10pt}
+\begin{table}[H]
+\centering
+    \caption{訓練集誤判率比較表格} \label{tb:訓練集誤判率比較表格}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{Training Error}}{\textbf{DATA}}} & \cellcolor{bubbles}{Data1} & \cellcolor{bubbles}{Data4} & \cellcolor{bubbles}{Data5} & \cellcolor{bubbles}{Data6} & \cellcolor{bubbles}{Data7} & \cellcolor{bubbles}{Data8} \\
+\hline
+\cellcolor{mistyrose}{LDA} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  \\
+\hline
+\cellcolor{mistyrose}{QDA} & \cellcolor{cream}{\textcolor {blue}{Worst}} & \cellcolor{cream}{\textcolor {ruddy}{Best}} & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{KNN(K=5)} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}   \\
+\hline
+\cellcolor{mistyrose}{KNN(K=15)} & \cellcolor{cream}{} & \cellcolor{cream}{\textcolor {blue}{Worst}} & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{ANN(10)} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{ANN(20)} & \cellcolor{cream}{\textcolor {ruddy}{Best}} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\end{tabular}
+\end{table}
+\newpage
+圖 \ref{fig:訓練集誤判率折線圖} 為六個資料的訓練集在六個學習器模擬中誤判率的折線圖。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir lineplottrain.png}}
+    \caption{訓練集誤判率折線圖}
+    \label{fig:訓練集誤判率折線圖}
+\end{figure}
+表 \ref{tb:測試集誤判率比較表格} 為六個資料的測試集在六個學習器模擬中誤判率的比較表格。
+\begin{table}[H]
+\centering
+    \caption{測試集誤判率比較表格} \label{tb:測試集誤判率比較表格}
+    \renewcommand{\arraystretch}{2}
+%    \extrarowheight=1.5pt
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{lightgray}{\backslashbox{\textbf{Testing Error}}{\textbf{DATA}}} & \cellcolor{bubbles}{Data1} & \cellcolor{bubbles}{Data4} & \cellcolor{bubbles}{Data5} & \cellcolor{bubbles}{Data6} & \cellcolor{bubbles}{Data7} & \cellcolor{bubbles}{Data8} \\
+\hline
+\cellcolor{mistyrose}{LDA} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  \\
+\hline
+\cellcolor{mistyrose}{QDA} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{KNN(K=5)} & \cellcolor{cream}{\textcolor {blue}{Worst}} & \cellcolor{cream}{\textcolor {blue}{Worst}} & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{KNN(K=15)} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{ANN(10)} & \cellcolor{cream}{\textcolor {ruddy}{Best}} & \cellcolor{cream}{\textcolor {ruddy}{Best}} & \cellcolor{cream}{\textcolor {blue}{Worst}}  & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}  & \cellcolor{cream}{}   \\
+\hline
+\cellcolor{mistyrose}{ANN(20)} & \cellcolor{cream}{} & \cellcolor{cream}{} & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{}  & \cellcolor{cream}{\textcolor {ruddy}{Best}}   \\
+\hline
+\end{tabular}
+\end{table}
+\newpage
+圖 \ref{fig:測試集誤判率折線圖} 為六個資料的測試集在六個學習器模擬中誤判率的折線圖。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir lineplottest.png}}
+    \caption{測試集誤判率折線圖}
+    \label{fig:測試集誤判率折線圖}
+\end{figure}
+
+\section{結語}
+這份蒙地卡羅模擬實驗的文章深入探討了不同機器學習方法在多組資料上的表現比較。通過觀察散佈圖和評比結果，我們得知在特定資料集上，LDA、QDA、KNN 和ANN這四種學習器的表現各有優劣。在某些情況下，ANN(20)表現最佳，而在其他情況下，則可能是其他學習器表現較佳。這凸顯了模型性能受到多方面因素影響的複雜性，包括模型的複雜度、資料的特性以及參數的選擇。因此，在實際應用中，需要根據具體情況選擇最適合的學習器。這份實驗為我們提供了寶貴的見解，幫助我們更好地理解不同機器學習方法的適用範圍，並為未來的相關研究和應用提供了重要的參考依據。
+

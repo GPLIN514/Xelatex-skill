@@ -1,0 +1,379 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+\usecolortheme[named=Blue]{structure}
+\input{preamble_GP_hw1.tex}  % 使用自己維護的定義檔
+\usetheme{Warsaw}
+\useoutertheme{miniframes}
+\title{ Blockchain}
+\author{{\KT 林貫原}}
+\date{{\R \today }}
+
+\begin{document}
+
+\maketitle
+\begin{frame}{\textbf{目錄}}
+	\tableofcontents % 將所有節及子節的內容輸出成表
+\end{frame}
+\section{何謂區塊鏈}
+\begin{frame}
+\frametitle{何謂區塊鏈}
+\begin{center}\colorbox{slight}{\begin{tabular}{p{0.9\textwidth}}
+    {\KT 區塊鏈並非比特幣}
+\end{tabular}}
+\end{center}
+\pause
+\begin{center}\colorbox{slight}{\begin{tabular}{p{0.9\textwidth}}
+    {\KT 區塊鏈是一種透過共識演算法實現信任去中心化的技術}
+\end{tabular}}
+\end{center}
+\pause
+\begin{itemize}
+    \item 去中心化
+    \item 匿名
+    \item 不可篡改
+    \item 加密
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{何謂區塊鏈}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.2]{\imgdir 區塊鏈.png}}
+    \label{fig:blockchain}
+    \end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{何謂區塊鏈}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.15]{\imgdir 區塊鏈1.png}}
+\end{figure}
+    \pause
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.2]{\imgdir 區塊鏈2.png}}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-燃料}
+交易手續費
+\pause
+\begin{columns}
+    \begin{column}{0.5\textwidth} % 左側列
+\begin{block}{
+\begin{itemize}
+    \item Gas Limit
+    \item Gas Price
+    \item Gwei
+    \item Wei
+\end{itemize}}
+\end{block}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth} % 右側列
+\begin{itemize}
+    \item $1Ether=10^{18}Wei$
+    \item $1Gwei=10^9Wei$
+\end{itemize}
+    \end{column}
+\end{columns}
+\pause
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.65]{\imgdir gas計算.png}}
+    \label{fig:gas計算}
+    \end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-燃料}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir Gas1.png}}
+    \label{fig:gas1}
+    \end{figure}
+\pause
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.47]{\imgdir Gas2.png}}
+    \label{fig:gas2}
+    \end{figure}
+\end{frame}
+
+\section{Decentralized}
+
+\begin{frame}
+\frametitle{Decentralized}
+\begin{columns}
+    \begin{column}{0.5\textwidth} 
+      \includegraphics[width=\textwidth]{\imgdir centralization.png}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth} 
+      \includegraphics[width=\textwidth]{\imgdir decentralization.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+\begin{frame}
+\frametitle{分叉}
+\pause
+\begin{columns}
+    \begin{column}{0.5\textwidth} % 左側列
+\begin{block}{
+\begin{itemize}
+    \item 工作狀態不一致
+    \item GHOST協議
+\end{itemize}}
+\end{block}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth} % 右側列
+\begin{itemize}
+    \item 軟分叉：網路延遲
+    \item 硬分叉：共識機制改變
+\end{itemize}
+    \end{column}
+\end{columns}
+\pause
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir Forks.png}}
+    \label{fig:Forks}
+    \end{figure}
+\end{frame}
+
+\section{Etherscan}
+
+\begin{frame}
+\frametitle{Etherscan}
+以太坊瀏覽器
+    \pause
+\begin{columns}
+    \begin{column}{0.3\textwidth} % 左側列
+\begin{itemize}
+    \item 瀏覽及查詢
+    \pause
+    \item 不可交易
+    \pause
+    \item 不可存私鑰
+    \pause
+    \item 不一定要註冊
+    \pause
+\end{itemize}
+    \end{column}
+    \begin{column}{0.7\textwidth} % 右側列
+      \includegraphics[width=\textwidth]{\imgdir Etherscan.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Ethereum}
+
+\begin{frame}
+\frametitle{以太坊-私鑰與公鑰}
+\begin{columns}
+    \begin{column}{0.35\textwidth} % 左側列
+\begin{block}{\begin{itemize}
+    \item 私鑰(256bits)
+    \pause
+    \begin{itemize}
+        \item 簽署交易$\rightarrow$ 對你的帳戶資產進行更改
+        \item 密碼學特性
+        \item 僅自己所有
+        \item 將訊息簽名
+    \end{itemize}
+    \pause
+\end{itemize}}
+\end{block}
+    \end{column}
+    \begin{column}{0.65\textwidth} % 右側列
+      \includegraphics[width=\textwidth]{\imgdir 單向函數.png}
+    \end{column}
+\end{columns}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-公鑰與地址}
+\begin{columns}
+    \begin{column}{0.5\textwidth} % 左側列
+\begin{block}{
+\begin{itemize}
+    \item 公鑰(512bits)
+    \begin{itemize}
+        \item 私鑰$\rightarrow$公鑰(ECDS)
+        \item 驗證簽名
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth} % 右側列
+\begin{block}{
+\begin{itemize}
+    \item 地址(160bits)
+    \begin{itemize}
+        \item 公鑰$\rightarrow$地址(hash)
+        \item 交易發起地
+        \item 以太坊帳戶
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+\end{columns}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-私鑰公鑰地址}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.445]{\imgdir 私鑰公鑰地址.png}}
+    \end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-私鑰公鑰地址}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir 公私鑰示意圖1.png}}
+    \end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{以太坊-私鑰公鑰地址}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir 公私鑰示意圖2.png}}
+    \end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{雜湊函數}
+Hash Function 是一種數學函數，它將任意長度的輸入，轉換成相同長度的輸出，其輸出叫做雜湊值（hash value） 。以下是他的四大特性:
+    \pause
+\hyperlink{https://emn178.github.io/online-tools/sha256.html}{\beamerbutton{跳}}    
+\begin{itemize}
+    \item 固定輸出長度
+    \pause
+    \item 唯一性
+    \pause
+    \item 效能高
+    \pause
+    \item 不可逆
+\end{itemize}
+\end{frame}
+
+\section{BTC V.S. ETH}
+
+\begin{frame}
+\frametitle{BTC V.S. ETH}
+\begin{columns}
+    \begin{column}{0.5\textwidth} % 左側列
+    \begin{block}{
+\begin{itemize}
+    \item 比特幣
+    \begin{itemize}
+        \item SHA-256
+    \pause
+        \item 雙重雜湊
+    \pause
+        \item 每秒3-4筆交易
+    \pause
+        \item 只具有支付功能
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth} % 右側列
+    \begin{block}{
+\begin{itemize}
+    \item 以太幣
+    \pause
+    \begin{itemize}
+        \item Keccak(SHA-3)
+    \pause
+        \item 密碼學特性
+    \pause
+        \item 每秒20筆交易
+    \pause
+        \item 執行智能合約
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\section{Metamask}
+
+\begin{frame}
+\frametitle{Metamask}
+\begin{itemize}
+        \item 是加密貨幣領域中廣泛使用的錢包之一
+        \item 作為瀏覽器擴展程式
+\end{itemize}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.6]{\imgdir matamask.png}}
+    \end{figure}
+    \end{frame}
+    
+\section{Smart Contract}
+    
+\begin{frame}
+\frametitle{Smart Contract}
+目標：更安全成本更低
+    \pause
+\begin{itemize}
+        \item 自動執行
+    \pause
+        \item 不可逆轉
+    \pause
+        \item 去中心化
+    \pause
+        \item 可程式化
+\end{itemize}
+\end{frame}
+
+\section{Solidity \& Remix}
+
+\begin{frame}
+\frametitle{Solidity \& Remix}
+\begin{columns}
+    \begin{column}{0.5\textwidth} % 左側列
+\begin{block}{
+\begin{itemize}
+    \item Solidity
+    \pause
+    \begin{itemize}
+        \item 主要流行於以太坊
+        \item 編寫智能合約的語言
+        \item 靜態語言
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth} % 右側列
+\begin{block}{
+\begin{itemize}
+    \item Remix
+    \pause
+    \begin{itemize}
+        \item 以太坊提供的線上版官方整合開發環境（IDE）
+        \item 兼具編譯，部署，測試等功能
+    \end{itemize}
+\end{itemize}}
+\end{block}
+    \end{column}
+\end{columns}
+\end{frame}
+\begin{frame}
+\frametitle{Remix}
+\begin{figure}
+    \centering{
+        \includegraphics[scale=0.21]{\imgdir remix.png}}
+    \end{figure}
+\end{frame}
+\begin{frame}[plain] % 產生無外框的頁面
+	\begin{center}
+		{\Huge Thank you for listening}
+	\end{center}
+\end{frame}
+\end{document}
+
+
+
+

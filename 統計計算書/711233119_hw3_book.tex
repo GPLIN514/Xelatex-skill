@@ -1,0 +1,414 @@
+\chapter{深入探討常見機率分配以與其特性}
+當我們進行統計分析時，我們需要了解各種機率分配的特性，例如期望值、變異數和動差生成函數等等。本文介紹了常見的機率分配，包括伯努利分布、二項分配、卜瓦松分配、常態分配等。在前兩節中，我們介紹了這些分配的基本公式，並運用圖形介紹分配的特性，以幫助讀者更好地理解和應用這些分配，而第三小節會介紹抽樣分配，描述從母體中抽取樣本時，樣本統計量(如平均數)的可能分佈，它有助於理解抽樣變異性及對母體特性的推斷。本文旨在幫助讀者更好地理解和應用機率分配，從而提高統計分析的準確性和可靠性。
+\section{離散型分配}
+因為離散分配的圖形都大同小異，因此本節不會將每一個離散分配都一一介紹。首先想先介紹幾個關於和的運算公式，在計算期望值、變異數等證明時常會使用到：
+\begin{enumerate}
+\item $$\sum_{k=1}^nk=\frac{n(n+1)}{2}$$
+\item $$\sum_{k=1}^nk^2=\frac{n(n+1)(2n+1)}{6}$$
+\item $$\sum_{k=1}^nk^3=\frac{n^2(n+1)^2}{4}$$
+\item 等比級數和：$${\displaystyle S_{n}={\begin{cases}{\frac {a(1-r^{n})}{1-r}}&r\neq 1\\an&r=1\end{cases}}}$$
+\item 無窮等比級數和：$${\displaystyle S_{\infty }={\frac {a}{1-r}}}$$
+\item 二項式定理：$$(x+y)^n=\sum_{k=0}^n\left(\begin{array}{c}n\\ k\end{array}\right)x^ky^{n-k}$$
+\item 泰勒展開式：$$\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n$$
+\item 馬克勞林級數：$$e^x=\sum_{n=0}^\infty\frac{x^n}{n!}=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\dots+\frac{x^n}{n!},\forall x$$
+\end{enumerate}
+\subsection{伯努力分配(Bernoulli Distribution)}
+伯努利分布(Bernoulli Distribution)，又名兩點分布或者0-1分布，是一個離散型機率分布。若伯努利試驗成功，則伯努利隨機變數取值為1。若伯努利試驗失敗，則伯努利隨機變數取值為0。記其成功機率為$p$ $(0\leq p\leq 1)$，失敗機率為$q=1-p$。
+
+圖 \ref{fig:bernoulli(p)} 為伯努力分配在不同機率下的直方圖，圖 \ref{fig:bernoulli(p)} (a)的機率為0.3，圖 \ref{fig:bernoulli(p)} (b)的機率為0.55，$x=0$表示試驗失敗的機率，$x=1$表示試驗成功的機率。
+\begin{figure}[H]
+    \centering
+        \subfloat[Ber(0.3)]{
+        \includegraphics[scale=0.35]{\imgdir bernoulli(0.3).png}}
+        \subfloat[Ber(0.55)]{
+        \includegraphics[scale=0.35]{\imgdir bernoulli(0.55).png}}
+    \caption{不同機率下的伯努力分配}
+    \label{fig:bernoulli(p)}
+\end{figure}
+\subsection{二項分配(Binomial Distribution)}
+二項分布是一種描述重複獨立二元試驗的機率分布，其中每次試驗有成功和失敗兩種結果，且成功的機率在每次試驗中都是相同的。它通常由兩個參數(試驗次數$n$和成功概率$p$)所描述，可用於計算在$n$次試驗中成功的次數或成功次數的分佈情況。
+
+舉個例子，假設我們進行一個硬幣投擲實驗，其中每次投擲硬幣的結果可以是正面(成功)或反面(失敗)。我們想知道在進行10次硬幣投擲後，正面朝上的次數。這個情境可以使用二項分布來建模，其中$n$ (試驗次數)為10，$p$ (每次投擲成功的機率，即正面出現的機率)為0.5 (因硬幣有兩面，正反面機率相等)。我們可以使用二項分布的機率質量函數計算在10次投擲中正面朝上的次數分佈，這有助於我們了解在多次硬幣投擲實驗中的可能結果。
+
+圖 \ref{fig:binomial(20,0.7)} 皆為$Bin(20,0.7)$的分配圖形，以四種不同的繪製方法來呈現。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.9]{\imgdir binomial(20,0.7).png}}
+    \caption{Bin(20,0.7)}
+    \label{fig:binomial(20,0.7)}
+\end{figure}
+
+二項分配其實與很多分配有關係，以下會對其做敘述並用圖來做驗證。
+
+\begin{itemize}
+\item 如果$X \sim B(n,p)$和$Y \sim B(m,p)$，且$X$和$Y$互相獨立，那麼$X+Y$也服從二項分配，它的分布為$X+Y \sim B(n+m,p)$。
+
+圖 \ref{fig:binomial(n,p)binomial(m,p)} 左圖設定的$X$服從$B(5,0.3)$，右圖設定的$Y$服從的是$B(3,0.3)$，那麼將$X+Y$就會服從$B(8,0.3)$，如圖 \ref{fig:binomial(n+m,p)} 所示，其左圖為$X+Y$後所成的機率質量函數圖，相加方式也可以用變數變換算出，而其右圖是直接繪畫出$B(8,0.3)$的圖形，可發現兩者為一模一樣，驗證此結果。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.375]{\imgdir bin(n,p)bin(m,p).png}}
+    \caption{$X \sim Bin(n,p)$及$Y \sim Bin(m,p)$}
+    \label{fig:binomial(n,p)binomial(m,p)}
+\end{figure}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.375]{\imgdir bin(n+m,p).png}}
+    \caption{$Bin(n+m,p)$}
+    \label{fig:binomial(n+m,p)}
+\end{figure}
+
+\item 伯努力分配是二項分配在$n=1$時的特殊情況，$X \sim B(1,p)$與$X\sim Ber(p)$的意思是相同的。相反的，任何的二項分配$B(n,p)$都是$n$次獨立的伯努力試驗的和，每次試驗的成功機率皆為$p$。
+
+
+ 
+\item 當試驗的次數趨於無窮大，而$np$固定時，二項式分布收斂於卜瓦松分布。因此若$n$夠大，而$p$夠小，母數為$\lambda =np$的卜瓦松分布可作為二項式分布$B(n,p)$近似。以下是數學證明過程：
+
+首先先對自然對數$e$以及二項分配做定義：
+$$\lim_{n\to\infty}\left(1-{\lambda \over n}\right)^n=e^{-\lambda},{\displaystyle P(X=k)={n \choose k}p^{k}(1-p)^{n-k}}$$
+如果另$np = \lambda $，$n$趨近無窮時$p$的極限：
+\begin{align*}
+&\lim_{n\to\infty} P(X=k)\\
+&=\lim_{n\to\infty}{n \choose k} p^k (1-p)^{n-k} \\
+ &=\lim_{n\to\infty}{n! \over (n-k)!k!} \left({\lambda \over n}\right)^k \left(1-{\lambda\over n}\right)^{n-k}\\
+&=\lim_{n\to\infty}
+\underbrace{\left[\frac{n!}{n^k\left(n-k\right)!}\right]}_F
+\left(\frac{\lambda^k}{k!}\right)
+\underbrace{\left(1-\frac{\lambda}{n}\right)^n}_{\to\exp\left(-\lambda\right)}
+\underbrace{\left(1-\frac{\lambda}{n}\right)^{-k}}_{\to 1} \\
+&= \lim_{n\to\infty}
+\underbrace{\left[ \left(1-\frac{1}{n}\right)\left(1-\frac{2}{n}\right) \ldots \left(1-\frac{k-1}{n}\right)  \right]}_{\to 1}
+\left(\frac{\lambda^k}{k!}\right)
+\underbrace{\left(1-\frac{\lambda}{n}\right)^n}_{\to\exp\left(-\lambda\right)}
+\underbrace{\left(1-\frac{\lambda}{n}\right)^{-k}}_{\to 1}      \\
+&= \left(\frac{\lambda^k}{k!}\right)\exp\left(-\lambda\right)
+\end{align*}
+當然也可以看圖作驗證，圖 \ref{fig:binomial_poisson} 設定的是當$n=1000$，$p=0.01$的情況。明顯就能從圖中發現兩者極其近似。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir bimomial＿poisson.png}}
+    \caption{二項分配的卜瓦松性質}
+    \label{fig:binomial_poisson}
+\end{figure}
+
+\item 如果$n$足夠大，那麼分布的偏度就比較小。在這種情況下，如果使用適當的連續性校正，那麼$B(n,p)$的一個很好的近似就是常態分配。$n$越大(至少30)，近似越好;當$p$不接近0或1時，近似越好。有一個規則是$np$和$np(1-p)$都必須要大於5。
+
+圖 \ref{fig:binomial_normal} 將二項分配與常態分配做比較，圖中藍色的直方圖表示了二項分佈($n=100,p=0.1$)的取值和其對應的機率，而紅色的曲線則代表了常態分佈($\mu=10,\sigma=3$)的取值和其對應的機率。這種對比可以幫助我們理解兩個分佈之間的相似性和區別，視覺上就可以判斷在該設定下，二項分配會趨近於常態分配的。當試驗次數($n$)足夠大且成功機率($p$)不過於接近0或1時，二項分佈的機率質量函數(PMF)會在足夠大的$n$下逐漸趨近於常態分佈的機率密度函數(PDF)。這種情況稱為二項分佈的常態近似。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir binomial_normal.png}}
+    \caption{二項分配的常態近似}
+    \label{fig:binomial_normal}
+\end{figure}
+\end{itemize}
+\subsection{負二項分配(Negative Binomial Distribution)}
+負二項分配是一種描述在一系列獨立且相同機率的二項試驗中，需要進行多少次試驗才能達到指定數量的成功次數的機率分布。具體而言，負二項分配表示了在成功機率為$p$的二項試驗中，第$k$次成功之前需要進行多少次試驗的次數。例如，在一個電子遊戲中贏得固定數量的比賽之前需要進行多少場比賽。
+
+圖 \ref{fig:negativebinomial_r} 設定的是在$p=0.5$及$r$不同的情況下，該機率質量函數的圖形變化，從$r=1$至$r=29$的變化，雖然此分配是離散型的，但從圖中藍色的各個點可明顯判斷其趨勢。從圖中可以發現以下幾件事情：
+\begin{enumerate}
+\item 隨著$r$值的增加，分布的峰值(最高機率質量點)向右移動，表示需要更多試驗次數才能達到指定的成功次數。
+\item 隨著$r$值的增加，分布的變異性(散佈度)減小，分布變得更加集中。這是因為較大的$r$值表示對成功的要求更加嚴格，因此成功次數較穩定。
+\item 隨著$r$值的增加，整個分布向右延伸，表示需要進行更多次試驗才能達到成功次數的目標。這反映了負二項分配的核心特性，即它描述了在多次獨立試驗中達到固定成功次數所需的試驗次數。
+\end{enumerate}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.3]{\imgdir negativebinomial_r.png}}
+    \caption{$NB(r,0.5)$}
+    \label{fig:negativebinomial_r}
+\end{figure}
+\section{連續型分配}
+\subsection{卡方分配(Chi-square distribution)}
+卡方分配描述了獨立且標準常態分佈的隨機變數的平方和，並以自由度(degrees of freedom)來參數化。卡方分配的概率密度函數(PDF)為非負且右偏斜，其形狀取決於自由度的數值。
+
+圖 \ref{fig:chi-squared-pdf} 設定的是卡方分配機率密度函數的圖形，其自由度從$df=5$至$df=50$的變化。可從圖中觀察到以下特點：
+\begin{enumerate}
+\item 當自由度較小時，卡方分佈呈現右偏，具有更大的尾部，但隨著自由度增加，分佈形狀逐漸接近常態分佈。
+\item 隨著自由度的增加，峰值逐漸上升，分佈的中心向右移動，尾部會逐漸減小，更趨於集中在平均值附近。這表示隨著自由度的增加，分佈的平均值也隨之增加。
+\item 隨著自由度增加，分佈的變異數逐漸減小，分佈變更集中。是由於卡方分佈的變異數與自由度相關，自由度越大，變異數越小。
+\item 卡方分佈是非負的，因此在圖形中，分佈的概率密度函數總是在橫坐標的正半軸上，不會出現負值。
+\end{enumerate}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir chi-squared-distribution_pdf.png}}
+    \caption{卡方分配不同自由度下的機率密度函數}
+    \label{fig:chi-squared-pdf}
+\end{figure}
+圖 \ref{fig:chi-squared-cdf} 設定的是卡方分配累積機率密度函數的圖形，其自由度從$df=5$至$df=50$的變化。隨著自由度的增加，CDF曲線在接近0的位置變化較快，然後在接近1的位置趨於穩定。這表明卡方分佈在較小值附近具有較大的變異性，但隨著自由度的增加，變異性逐漸減小，分佈趨向於穩定。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.73]{\imgdir chi-squared-distribution_cdf.png}}
+    \caption{卡方分配不同自由度下的累積機率密度函數}
+    \label{fig:chi-squared-cdf}
+\end{figure}
+\subsection{t 分配(t-Distribution)}
+$t$分配(student-t distribution)用於估計母體的平均值，當母體的標準差未知且根據有限樣本數進行推斷時，它特別有用。$t$分配形狀取決於自由度的數值，當自由度較高時，$t$分配趨向於標準常態分配，但當自由度較低時，它更廣泛地分佈在尾部，呈現出更多的變異性。這種分布的特性使得$t$分配在小樣本數據的統計推斷中特別有價值，並用於計算信賴區間和執行假設檢定。
+
+舉個例子，假設你想要估計一個母體的平均數，但只有少數樣本數據可供使用。你從一個小型樣本中取得了5個觀測值：[12, 15, 14, 16, 13]。你希望計算這個樣本的平均數的信賴區間，但由於樣本數量有限，你無法使用常態分佈來進行估算。在這種情況下，你可以使用$t$分佈來估算平均數的信賴區間。你需要計算樣本的平均數和標準誤差，然後使用$t$分佈對應的自由度來計算信賴區間。自由度通常是樣本數減1，因此在這個例子中，自由度為4。
+
+圖 \ref{fig:t-distribution_pdf} 設定的是在$df=0.1$至$df=1.1$以0.1為間隔以及$df=3$至$df=30$以3為間隔的情況下，其機率密度函數的圖形。以下為圖中可觀察到的特性：
+\begin{enumerate}
+\item 圖中繪製了不同自由度($df$)下的$t$分布曲線，包括較低自由度的情況($0.1~1.1$)以及較高自由度的情況($3~30$)。隨著自由度的增加，$t$分布曲線逐漸趨近於標準常態分布。
+\item 對於較低自由度的$t$分布，曲線的尾部相對較厚，這意味著較低自由度的$t$分布相對於標準常態分布更容易出現極端值。
+\item 隨著自由度的增加，$t$分布逐漸接近標準常態分布。這表示當自由度較高時，$t$分布的形狀與常態分布非常相似，且具有相似的均值和標準差，這也是為何會設定樣本數要大於30才可服從大樣本常態近似的關係。
+\item 圖中繪製了標準常態分布的曲線(黑色曲線)，其均值為0，標準差為1。標準常態分布是$t$分布在自由度足夠大時(趨近於無窮大)的極限情況，因此具有尖峰的形狀。
+\end{enumerate}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir t-distribution_pdf.png}}
+    \caption{$t$分配在不同自由度下的機率密度函數}
+    \label{fig:t-distribution_pdf}
+\end{figure}
+圖 \ref{fig:t-distribution_cdf} 設定的是在$df=0.1$至$df=1.1$以0.1為間隔以及$df=3$至$df=30$以3為間隔的情況下，其累積機率密度函數的圖形。展示了不同自由度下的 $t$分布和標準常態分布的累積分佈函數(CDF)，隨著自由度的增加，$t$分布逐漸接近標準常態分布。低自由度的$t$分布具有寬尾部，而高自由度的$t$分布則更接近標準常態分布，尾部較窄。這張圖有助於理解$t$分布的特性，尤其是隨著自由度的改變，$t$分布逼近常態分布的趨勢。
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.67]{\imgdir t-distribution_cdf.png}}
+    \caption{$t$分配在不同自由度下的機率密度函數}
+    \label{fig:t-distribution_cdf}
+\end{figure}
+\subsection{F 分配(F-Distribution)}
+$F$分配常用於比較兩個或更多組數據的變異性，以確定是否具有統計學上的顯著差異。$F$分配具有兩個自由度參數，通常表示為$d_1$和$d_2$。它的機率密度函數是正數且右偏的，其形狀由自由度參數所決定。通常$F$分配的右尾用於測試一組變異數是否大於另一組，以確定兩組數據是否來自不同變異性的母體。
+
+假設有兩個組的學生，一組接受教學方法A，另一組接受教學方法B。我們想知道哪種方法對學生成績有更大的影響，可以設定虛無假設為方法A和方法B的變異性相同，取得樣本成績後就可以用$F$分配來比較兩組的變異性。如果發現$F$統計值高於臨界值，可以拒絕零假設，表示這兩種方法對學生成績的變異性有顯著差異。
+
+圖 \ref{fig:F-distribution_pdf_fixeddf2} 設定的是在$df_2=60$的情況下，該機率密度函數的圖形，從$df_1=1$至$df_1=100$的變化。
+\begin{enumerate}
+\item 隨著$df_1$值的增加，$PDF$的峰值逐漸升高並變窄。這表示當$df_1$增加時，$F$統計量在特定值附近的機率增加，且分佈更加集中。
+\item 隨著$df_1$增加，其右尾的狀態會越趨向常態，但依舊為右尾，永遠不可能變為左尾。
+\end{enumerate}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.67]{\imgdir F-distribution_pdf_fixeddf2.png}}
+    \caption{$F(df_1,60)$的機率密度函數}
+    \label{fig:F-distribution_pdf_fixeddf2}
+\end{figure}
+圖 \ref{fig:F-distribution_cdf} 設定的也是在$df_2=60$的情況下，該累積機率密度函數的圖形，從$df_1=1$至$df_1=100$的變化，可以發現以下幾件事：
+\begin{enumerate}
+\item 隨著$df_1$值增加，$CDF$的斜率逐漸變陡。表示當$df_1$增加時，$F$統計量在特定值以下的機率增加，也就是$F$分佈在較小值附近的累積機率增加。
+\item 隨著$df_1$值的增加，$F$統計量趨於右偏，即右尾部的機率增加。這反映了當第一自由度較大時，$F$分佈的右尾部可能包含更多的極端值，這在統計假設檢定中可能很重要。
+\item 在圖中，不同顏色代表不同的$df_1$值，這使您能夠比較不同$df_1$值下的$F$分佈特性。隨著$df_1$值的增加，$F$分佈的位置和形狀有所變化，這有助於理解$F$分佈在不同情況下的行為。
+\end{enumerate}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.67]{\imgdir F-distribution_cdf.png}}
+    \caption{$F(df_1,60)$的累積機率密度函數}
+    \label{fig:F-distribution_cdf}
+\end{figure}
+
+圖 \ref{fig:F-distribution_pdf_df_1<df_2、df_1>df_2、df_1=df_2} 比較了三種狀況，為了更加清楚看出其不同的變化，我們將自由度設定在10以下，可以發現(b)、(c)圖形很相近，但(a)就不太一樣，尤其是在$df_2=1$的狀況之下。
+
+\begin{figure}[H]
+    \centering
+        \subfloat[$F(10,df_2)$]{
+        \includegraphics[scale=0.38]{\imgdir F-distribution_pdf_df21-9.png}}
+        \subfloat[$F(df_1,10)$]{
+        \includegraphics[scale=0.38]{\imgdir F-distribution_pdf_df11-9.png}}\\
+        \subfloat[$F(df_1,df_2),df_1=df_2$]{
+        \includegraphics[scale=0.38]{\imgdir F-distribution_pdf_df1=df2.png}}
+    \caption{$df_1<df_2$、$df_1>df_2$、$df_1=df_2$機率密度函數比較}
+    \label{fig:F-distribution_pdf_df_1<df_2、df_1>df_2、df_1=df_2}
+\end{figure}
+
+\subsection{伽瑪分配(Gamma Distribution)}
+伽瑪分配通常用於描述等待事件發生的時間或次數，特別是在信號處理、可靠度工程、醫學和自然科學等領域的應用。伽瑪分配由兩個參數組成：形狀參數(shape parameter) $\alpha$和比例參數(scale parameter) $\beta$ ，記為$\Gamma(\alpha , \beta )$。
+
+以下為一些伽瑪分配常用到的公式：
+\begin{itemize}
+\item $\Gamma(\alpha)=\int_{0}^{\infty} y^{\alpha-1}e^{-y}dy,\alpha>0$
+\item $\Gamma(\alpha)=(\alpha-1)\Gamma(\alpha-1)$
+\item $\Gamma(\alpha)=(\alpha-1)! ,\alpha \in N$
+\item $\int_{0}^{\infty} y^{\alpha-1}e^{-\frac{y}{\beta}}dy=\Gamma(\alpha)\beta^{\alpha},\alpha>0,\beta>0$
+\item $\Gamma(\frac{1}{2})=\sqrt{\pi}$
+\item $\Gamma(z)=\int_{1}^{\infty}\frac{t^{z-1}}{\mathrm{e}^t}{\rm{d}}t+\sum_{n=0}^{\infty}\frac{(-1)^n}{n!}\frac{1}{n+z}$
+\item $\Gamma (z)={\frac  {1}{z}}\prod _{{n=1}}^{{\infty }}\left(1+{\frac  {z}{n}}\right)^{{-1}}\left(1+{\frac  {1}{n}}\right)^{{z}}$
+\end{itemize}
+
+
+圖 \ref{fig:gamma-distribution_pdf} 設定的是在固定$\beta =2$的情況下，該機率密度函數的圖形，從$\alpha =2$至$\alpha =25$的變化。由圖中可發現較大的$\alpha$值會使分佈更接近常態分佈，而較小的$\alpha$值會導致分佈更加偏斜。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.7]{\imgdir gamma-distribution_pdf.png}}
+    \caption{$\Gamma(\alpha ,2)$的機率密度函數}
+    \label{fig:gamma-distribution_pdf}
+\end{figure}
+\subsection{貝塔分配(Beta Distribution)}
+貝塔分配通常用來表示在有限區間 [0, 1] 上的隨機變數，如機率、比例或機率參數。貝塔分配在貝葉斯統計、信任區間估計和A/B測試等領域中具有廣泛的應用，因其靈活性和適應性而廣受歡迎。
+
+以下為一些貝塔分配常用到的公式：
+\begin{itemize}
+\item $\mathrm{B} (x,y)={\frac  {\Gamma (x)\,\Gamma (y)}{\Gamma (x+y)}}$
+\item ${\frac  {\Gamma (x)\,\Gamma (y)}{\Gamma (x+y)}}{\displaystyle =\int _{0}^{1}t^{x-1}(1-t)^{y-1}\,\mathrm {d} t\!}$
+\end{itemize}
+圖 \ref{fig:beta-distribution_pdf} 為貝塔分配在控制$\alpha=9$的狀況下，比較不同$\beta$值的機率密度函數圖形，由圖中可發現當$\beta$值越大，圖形會越偏向常態，但其依舊是右尾；$\beta$值越小，圖形越偏向左尾。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.63]{\imgdir beta-distribution_pdf.png}}
+    \caption{$B(9,\beta)$的機率密度函數}
+    \label{fig:beta-distribution_pdf}
+\end{figure}
+
+從圖 \ref{fig:beta-distribution_a,b_pdf} 中我們可以看到貝塔分配的幾個特性：
+\begin{enumerate}
+\item 形狀參數 $\alpha$ 和 $\beta$ 的不同取值會影響機率密度函數的形狀。當$\beta <\alpha$ ，分佈可能更左偏；當$\beta >\alpha$ ，分佈可能更右偏；當$\beta =\alpha$ ，分佈可能更對稱。
+\item 貝塔分配的機率密度函數在 [0, 1] 區間內，表示一個隨機變數的取值機率。隨著 $\alpha$ 和 $\beta$ 參數的變化，機率密度函數的峰值位置和形狀會有所不同。
+\item 在這張圖中，不同的顏色代表不同的參數組合，可以觀察到各種情境下的貝塔分配的圖形變化。
+\end{enumerate}
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.8]{\imgdir beta-distribution_a,b_pdf.png}}
+    \caption{貝塔分配不同參數下的pdf}
+    \label{fig:beta-distribution_a,b_pdf}
+\end{figure}
+\subsection{常態分配(Normal Distribution)}
+常態分配又被稱為高斯分配，它以其典型的鐘形曲線特徵而著稱，曲線在平均值處達到最高點，並對稱分佈在平均值兩側。常態分配能夠描述各種現象，如測量誤差、身高、考試成績等。此分佈的特點之一是其對稱性，平均值是分佈的中心點，並且左右兩側的機率密度相等。此外，常態分配具有中央極限定理的特性，當多個獨立且同分佈的隨機變數相加時，其和的分佈趨向於常態分配。這使得常態分配在統計分析和假設檢驗中非常有用。
+
+舉個較生活化的例子，假設我們測量了一大群成年人的身高，並將這些數據繪製成直方圖，我們通常會發現它近似於常態分佈的形狀。這意味著大多數人的身高集中在平均值附近，而在平均值附近的人數更多，而隨著身高遠離平均值，人數逐漸減少。
+
+例如，假設平均身高為170厘米，並且身高的標準差為10厘米。這表示大多數人的身高在160厘米到180厘米之間，而越來越高或越來越矮的人數會逐漸減少。這符合常態分佈的特性。
+
+圖 \ref{fig:normal-distribution_mean} 顯示了在相同標準差的情況下，不同平均值對常態分佈的影響。每條曲線代表一個不同的平均值，並且它們都呈現出對稱的鈎狀分佈，這是常態分佈的典型特徵。平均值不同導致分佈的中心位置不同，但所有分佈都具有相似的形狀和對稱性。此圖強調了平均值對常態分佈的中心位置的影響。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir normal-distribution_mean.png}}
+    \caption{常態分配不同平均數下的pdf}
+    \label{fig:normal-distribution_mean}
+\end{figure}
+圖 \ref{fig:normal-distribution_std} 展示了在相同平均值(平均值為0)的情況下，不同標準差(從0.5到3)對常態分佈的影響。每條曲線代表一個不同的標準差，並且它們呈現出分佈的寬度和散佈程度的不同。較大的標準差導致分佈更寬，而較小的標準差導致分佈更窄。這張圖強調了標準差對常態分佈的散佈程度的影響。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir normal-distribution_std.png}}
+    \caption{常態分配不同標準差下的pdf}
+    \label{fig:normal-distribution_std}
+\end{figure}
+\section{抽樣分配(Sampling distribution)}
+\subsection{基本變數}
+本小節運用Python生成隨機樣本，而樣本是給定的幾個常見分配，之後再做抽樣，以此來探討抽樣分配與其關聯性。
+\subsubsection{常態分配}
+圖 \ref{fig:normal-distribution_sample} 展示了隨著樣本大小的增加，不同樣本的分佈如何變化。
+
+以下為其可看出的幾個特點：
+
+\begin{enumerate}
+\item 樣本分佈的變化：程式碼生成了不同樣本大小的隨機樣本，這些樣本來自平均數為0，標準差為 1 的標準常態分佈。透過直方圖觀察，可以看到隨著樣本大小增加，抽樣分佈逐漸趨近於理論的常態分佈。
+\item 理論分佈的比較：程式碼同時繪製了理論的常態分佈曲線，即平均數為 0，標準差為 1 的標準常態分佈的概率密度函數。這條曲線用來比較不同樣本大小下的實際抽樣分佈。
+\item 樣本大小對分佈的影響：整體而言，這段程式碼強調了樣本大小對於抽樣分佈的影響。隨著樣本大小增加，抽樣分佈逐漸趨近於理論的常態分佈，反映了中央極限定理的基本思想。
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.47]{\imgdir normal-distribution_sample.png}}
+    \caption{常態抽樣分配不同樣本數的影響}
+    \label{fig:normal-distribution_sample}
+\end{figure}
+
+\subsubsection{指數分配}
+圖 \ref{fig:rnb_exponential_distribution} 運用四種類型的圖表展示不同樣本大小下指數分佈的特性：
+\begin{enumerate}
+\item Boxplot 用於顯示不同樣本大小下的數據分布。隨著樣本增加，中位數、上下四分位數和異常值的估計更加穩定。
+\item QQ Plot用於比較實際樣本數據的分位數和理論指數分佈的分位數。隨著樣本增加，實際樣本數據越來越趨近於理論指數分佈。
+\item ECDF(Empirical Cumulative Distribution Function)顯示實際樣本數據的經驗分佈函數以及理論指數分佈的分佈函數比較。可以發現隨著樣本大小增加，實際 ECDF 更趨近於理論指數分佈函數。
+\item 此圖比較了實際樣本數據的直方圖與理論指數分佈的概率密度函數。隨著樣本大小的增加，實際直方圖更趨近於理論的PDF，進一步證實了隨著樣本大小的增加，樣本數據趨近於指數分佈。
+\end{enumerate}
+\begin{figure}[H]
+    \centering{
+        \includegraphics[scale=0.3]{\imgdir rnb_exponential_distribution.png}}
+    \caption{指數分配隨機樣本的亂數圖}
+    \label{fig:rnb_exponential_distribution}
+\end{figure}
+
+\subsubsection{$F$分配}
+圖 \ref{fig:F-distribution_sample} 對自由度設定為$d_1=5$和$d_2=10$的$F$分佈進行不同樣本大小的抽樣的結果，並包括直方圖和經驗累積分佈函數(ECDF)。
+\begin{enumerate}
+\item 隨著樣本數的增加，直方圖越來越接近理論的 F 分佈（紅色曲線），這表明大樣本量更接近理論分佈。
+\item 對於較小的樣本數，直方圖的形狀可能會有所不同，這是由於隨機性造成的。
+\item 直方圖的峰值和形狀受樣本數影響，當樣本數增加時，峰值變得更尖銳，分佈形狀更接近正態分佈。
+\item ECDF圖也呈現相似的行為，隨著樣本數的增加，實際ECDF曲線（綠色曲線）更接近理論CDF曲線（紅色曲線）。
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.45]{\imgdir F-distribution_sample.png}}
+    \caption{$F$隨機樣本的亂數圖}
+    \label{fig:F-distribution_sample}
+\end{figure}
+\subsubsection{二項分配}
+圖 \ref{fig:binomial-distribution_sample} 為二項分佈進行不同樣本大小的抽樣的結果，並包括直方圖和經驗累積分佈函數(ECDF)。與前面幾個抽樣分配得出的結果很類似，主要在說明隨著樣本大小的增加，實際樣本數據更接近於理論分佈。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.5]{\imgdir binomial-distribution_sample.png}}
+    \caption{二項分配隨機樣本的亂數圖}
+    \label{fig:binomial-distribution_sample}
+\end{figure}
+
+\subsection{隨機抽樣的平均數分佈}
+給定四個數字(2, 4, 9, 12)。從這四個數字中隨機抽取四個數字(取後放回)並計算其平均數。假設隨機變數$Y$代表這四個數字的平均數。圖 \ref{fig:sampling-distribution_mean} 繪製隨機變數$Y$的PMF。由圖中可發現以下特性：
+\begin{enumerate}
+\item 這張圖表展示了四個數字(2, 4, 9, 12)的平均值的機率質量函數估計。中央極限定理的一個重要特性是，當你從一個母體中隨機抽樣並計算樣本平均數時，這些樣本平均數的分佈會趨向於常態分佈。這張圖呈現了這種趨勢，即隨機變數$Y$的概率質量函數(PMF)呈現類似常態分佈的特性。
+\item 圖中的長條圖顯示了不同平均值的機率，並且這些機率在不同平均值處具有明顯的峰值。這反映了抽樣分配的離散性質，即平均值可能取得某些特定值的概率更高。
+\item 此圖通過抽取100萬次樣本，圖表表現出了大樣本效應。隨著樣本大小的增加，抽樣分配更趨向於常態分佈，這在中央極限定理中有所體現。
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.75]{\imgdir sampling-distribution_mean.png}}
+    \caption{(2, 4, 9, 12)抽樣計算平均數的機率質量函數估計}
+    \label{fig:sampling-distribution_mean}
+\end{figure}
+\subsection{蒙地卡羅模擬}
+令 $\{x_i, i=1,\cdots, n\}$ 代表來自標準常態 $N(0,1)$ 的 $n$ 個隨機樣本。統計量 $G_1$ 表示為
+$$G_1 = \sqrt{\frac{n}{6}} \hat{s}$$
+其中 $\hat{s}$ 為偏態係數(skewness)的估計值。我們利用蒙地卡羅模擬(Monte Carlo Simulation)驗證統計量$G_1$服從標準常態$N(0,1)$。其中蒙地卡羅模擬的環境設定(scenarios)為：
+\begin{itemize}
+\item 樣本數$n=10,20,30,50,100,300,500$。
+\item 針對每個樣本數$n$，模擬次數皆為 $N=10000$。
+\item 繪製$n=10$ 與$n=500$時，統計量$G_1$的直方圖與 ECDF 圖。
+\end{itemize}
+圖 \ref{fig:sampling-distribution_G1} 的目的是比較統計量 $G_1$ 的模擬結果與標準常態分佈 $N(0,1)$ 之間的相似性。如果模擬結果接近標準常態分佈，則 $G_1$ 被視為服從標準常態分佈。通過觀察直方圖和PDF，我們可以看到統計量 $G_1$ 在不同的 $n$ 值下是否趨近於標準常態分佈，從而驗證 $G_1$ 是否符合所需的分佈特性。我們可以從圖中觀察到 $G_1$ 的模擬結果與標準常態分佈的PDF相當接近，這表明 $G_1$ 在不同的 $n$ 值下趨近於標準常態分佈，從而確認了統計量 $G_1$ 服從標準常態分佈 $N(0,1)$。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir sampling-distribution_G1.png}}
+    \caption{$G_1$隨機樣本}
+    \label{fig:sampling-distribution_G1}
+\end{figure}
+
+圖 \ref{fig:sampling-distribution_G2} 確認了統計量$G_2$通過蒙地卡羅模擬符合標準常態分佈的特性，並且隨著樣本數的增加，逼近了理論的期望值。這符合中央極限定理的預期結果。隨著樣本數$n$的增加，統計量$G_2$的分佈變得更尖峭且接近常態分佈。這顯示中央極限定理的作用，隨著樣本數增加，樣本均值的分佈越趨近於常態分佈。在直方圖中，我們可以看到統計量$G_2$的分佈呈現較多的數值集中在平均值附近(0)，這是常態分佈的特點。透過模擬結果與標準常態分佈 PDF 的對照，我們可以看到模擬結果與標準常態分佈非常相符，這表明統計量$G_2$確實服從標準常態分佈的期望特性。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir sampling-distribution_G2.png}}
+    \caption{$G_2$隨機樣本}
+    \label{fig:sampling-distribution_G2}
+\end{figure}
+
+
+
+
+圖 \ref{fig:sampling-distribution_G3} 的目的是比較統計量$G_3$的模擬結果與卡方分佈$\chi ^2(2)$之間的相似性。如果模擬結果接近卡方分佈，那麼$G_3$被視為符合卡方分佈$\chi ^2(2)$。通過觀察直方圖和PDF，我們可以看到統計量$G_3$在不同的$n$值下是否趨近於卡方分佈，從而驗證了$G_3$是否符合所需的分佈特性。從這張圖中，我們可以觀察到$G_3$的模擬結果與卡方分佈的概率密度函數(PDF)非常相似，這表明$G_3$在不同的$n$值下趨近於卡方分佈$\chi ^2(2)$。
+\begin{figure}[h]
+    \centering{
+        \includegraphics[scale=0.4]{\imgdir sampling-distribution_G3.png}}
+    \caption{$G_3$隨機樣本}
+    \label{fig:sampling-distribution_G3}
+\end{figure}
+\section{結語}
+透過這些圖表的呈現，我們更清楚地理解了不同機率分佈的特性，以及它們的參數在形狀和分布方面的含義。每個機率分佈都有其獨特的規律和特點，這些圖表為我們提供了有力的工具，幫助我們更好地理解數據和現象。
+
+無論是二項分佈的試驗次數、卜瓦松分佈的發生率，還是常態分佈的均值和變異數，我們都能從這些圖表中獲得寶貴信息。這些信息有助於我們選擇合適的機率分佈分析數據，進行預測和做出更精確的決策。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
